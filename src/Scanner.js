@@ -9,6 +9,7 @@ import DefaultPreference from 'react-native-default-preference';
 import URLSearchParams from 'url-search-params';
 import DeviceInfo from 'react-native-device-info';
 import FingerprintPopup from './AndroidFingerPrintScanner';
+import { ProgressDialog } from 'react-native-simple-dialogs';
 
 import { 
     Platform,
@@ -31,7 +32,9 @@ export default class Scanner extends Component{
   state = { willReactivate: true,
             preAuth:'',
             udid:'',
-             authToken:''};
+             authToken:'',
+             progressVisible:false
+            };
 
   urlForQueryAndPage(deviceName,preAuth,udid) {
 
@@ -77,14 +80,15 @@ export default class Scanner extends Component{
   }
 
   executeQuery(urlString){
+    this.setState({progressVisible:true});
     axios.get(urlString)
     .then(response => this.getMagicToken(response));
     
   }
 
   proceedToFingerPrint(response){
+    this.setState({progressVisible:false});
     DefaultPreference.set('magic', response.data.MAGIC).then(() => {
-      console.log('done');
       console.log('platform',Platform.OS);
       Platform.OS === 'android' ?Actions.androidFingerPrintPage(): Actions.fingerPrintPage();
 
@@ -117,16 +121,22 @@ export default class Scanner extends Component{
   }
     render() {
         return(
+          <View style={styles.container}>
+          <ProgressDialog 
+          visible={this.state.progressVisible} 
+          title="Progress Dialog" 
+          message="Please, wait..."
+         />  
             <QRCodeScanner 
             reactivate = {this.state.willReactivate}
             reactivateTimeout = {5000}
             showMarker = {true}
-            bottomContent= {<TouchableHighlight onPress={(e)=>Actions.pop()}>
+            bottomContent= {<TouchableHighlight style={styles.footerStyle} onPress={(e)=>Actions.pop()}>
                             <Text style={styles.textStyle}>
                               Cancel
                             </Text>
                             </TouchableHighlight>}
-            cameraStyle={{ height: Dimensions.get('window').height -64, marginTop:0 }}
+            cameraStyle={{ height: Dimensions.get('window').height, marginTop:0 }}
             onRead={(e) =>{
               console.log('QR code scanned!', e);
               const uniqueId = DeviceInfo.getUniqueID();
@@ -184,13 +194,8 @@ export default class Scanner extends Component{
                 <View style={styles.bottomOverlay} />
               </View>
             }
-    
-          //   onRead={(e) =>{
-          //     console.log('QR code scanned!', e);
-              
-          // }}
-
             />  
+          </View>
         );
     }
 }
@@ -209,8 +214,20 @@ const scanBarColor = "#22ff00";
 const iconScanColor = "blue";
 
 const styles = {
+  container: {
+    flex: 1,
+    flexDirection: "column",  
+  backgroundColor: '#fff',
+},
     textStyle:{
-        color: '#2196F3'
+        color: '#2196F3',
+        marginTop:20
+    },
+    footerStyle:{
+      height: 88,
+      backgroundColor:'#ddd',
+      alignSelf: 'stretch',
+      alignItems: 'center',
     },
   rectangleContainer: {
     flex: 1,
