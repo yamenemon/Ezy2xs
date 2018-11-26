@@ -8,7 +8,6 @@ import * as Animatable from "react-native-animatable";
 import DefaultPreference from 'react-native-default-preference';
 import URLSearchParams from 'url-search-params';
 import DeviceInfo from 'react-native-device-info';
-import FingerprintPopup from './AndroidFingerPrintScanner';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 
 import { 
@@ -90,7 +89,7 @@ export default class Scanner extends Component{
     this.setState({progressVisible:false});
     DefaultPreference.set('magic', response.data.MAGIC).then(() => {
       console.log('platform',Platform.OS);
-      Platform.OS === 'android' ?Actions.androidFingerPrintPage(): Actions.fingerPrintPage();
+      Platform.OS === 'android' ?Actions.fingerPrintPage(): Actions.fingerPrintPage();
 
       console.log('response',response.data);
     });
@@ -124,7 +123,6 @@ export default class Scanner extends Component{
           <View style={styles.container}>
           <ProgressDialog 
           visible={this.state.progressVisible} 
-          title="Progress Dialog" 
           message="Please, wait..."
          />  
             <QRCodeScanner 

@@ -32,7 +32,6 @@ class GridMenu extends Component {
             <View style={styles.container}>
                 <ProgressDialog 
                     visible={this.state.progressVisible} 
-                    title="Progress Dialog" 
                     message="Please, wait..."
                 />  
           <SuperGridSectionList

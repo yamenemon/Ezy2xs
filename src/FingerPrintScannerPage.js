@@ -8,7 +8,7 @@ import { View } from 'react-native-animatable';
 
 class FingerPrintScannerPage extends Component{
 
-    handlePopupDismissed() {
+    dismissHandlePopUp() {
         console.log("handlePopupDismissed");
     }
 
