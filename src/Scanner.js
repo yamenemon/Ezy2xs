@@ -6,8 +6,13 @@ import axios from 'axios';
 import { sha256 } from 'react-native-sha256';
 import * as Animatable from "react-native-animatable";
 import DefaultPreference from 'react-native-default-preference';
+import URLSearchParams from 'url-search-params';
+import DeviceInfo from 'react-native-device-info';
+import FingerprintPopup from './AndroidFingerPrintScanner';
 
-import { WebView,
+import { 
+    Platform,
+    WebView,
     AppRegistry,
     StyleSheet,
     Dimensions,
@@ -78,9 +83,14 @@ export default class Scanner extends Component{
   }
 
   proceedToFingerPrint(response){
-    DefaultPreference.set('magic', response.data.MAGIC).then(() => {console.log('done')});
-    console.log('response',response.data);
-    Actions.fingerPrintPage();
+    DefaultPreference.set('magic', response.data.MAGIC).then(() => {
+      console.log('done');
+      console.log('platform',Platform.OS);
+      Platform.OS === 'android' ?Actions.androidFingerPrintPage(): Actions.fingerPrintPage();
+
+      console.log('response',response.data);
+    });
+
   }
 
   performLoginAPI(urlString){
@@ -118,25 +128,24 @@ export default class Scanner extends Component{
                             </TouchableHighlight>}
             cameraStyle={{ height: Dimensions.get('window').height -64, marginTop:0 }}
             onRead={(e) =>{
-              var DeviceUUID = require("react-native-device-uuid");
-              DeviceUUID.getUUID().then((uuid) => {
-              console.log('uuid',uuid);
-              this.setState({udid:uuid})
-              const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
-              console.log('query',query);
-              this.executeQuery(query);
-              });
               console.log('QR code scanned!', e);
+              const uniqueId = DeviceInfo.getUniqueID();
+              console.log('uniqueId',uniqueId);
+              this.setState({udid:uniqueId})
+
         
               var urlParams = new URLSearchParams(e.data);
               var values = urlParams.values();
                 for(value of values) { 
+                  if(value != 'Apple APP')
                   console.log(value);
                   sha256(value).then( hash => {
                     console.log('hash',hash)
                     this.setState({preAuth:hash})
+                    const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
+                    console.log('query',query);
+                    this.executeQuery(query);
                   })
-
                 }
 
 

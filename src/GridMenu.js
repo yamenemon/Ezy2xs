@@ -4,6 +4,8 @@ import { SuperGridSectionList, GridView  } from 'react-native-super-grid';
 import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
 import axios from 'axios';
+import { ProgressDialog } from 'react-native-simple-dialogs';
+
 
 import GridItem from './components/GridItem';
 import Header from './components/Header';

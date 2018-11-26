@@ -8,6 +8,8 @@ import FingerPrintScannerPage from './FingerPrintScannerPage';
 import PinCodePage from './PinCodePage';
 import WebPage from './WebPage';
 import PortalPage from './PortalPage';
+import FingerprintPopup from './AndroidFingerPrintScanner';
+
 
 const RouterComponent = () =>{
     return(
@@ -21,6 +23,7 @@ const RouterComponent = () =>{
                 </Modal>
                 <Scene key="webPage" component={WebPage} title='WebView' />
                 <Scene key="fingerPrintPage" component={FingerPrintScannerPage} title='Authenticate Using FingerPrint' />
+                <Scene key="androidFingerPrintPage" component={FingerprintPopup} title='Authenticate Using FingerPrint' />
                 <Scene key="pinCodePage" component={PinCodePage} title='Authenticate Using PinCode'/> 
                 </Scene>
                 <Scene key="main">
