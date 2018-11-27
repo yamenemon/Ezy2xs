@@ -9,6 +9,7 @@ import PinCodePage from './PinCodePage';
 import WebPage from './WebPage';
 import PortalPage from './PortalPage';
 
+
 const RouterComponent = () =>{
     return(
         <Router>

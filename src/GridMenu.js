@@ -4,12 +4,16 @@ import { SuperGridSectionList, GridView  } from 'react-native-super-grid';
 import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
 import axios from 'axios';
+import { ProgressDialog } from 'react-native-simple-dialogs';
+
 
 import GridItem from './components/GridItem';
 import Header from './components/Header';
 class GridMenu extends Component {
 
-    state = { magic:''};
+    state = { magic:'',
+             progressVisible:false
+            };
     render(){
         const items = [
             { name: 'TURQUOISE', code: '#676767' }, { name: 'EMERALD', code: '#2ecc71' },
@@ -25,7 +29,12 @@ class GridMenu extends Component {
           ];
       
         return(
-            <SuperGridSectionList
+            <View style={styles.container}>
+                <ProgressDialog 
+                    visible={this.state.progressVisible} 
+                    message="Please, wait..."
+                />  
+          <SuperGridSectionList
             itemDimension={100}
             sections={[
                 {
@@ -53,7 +62,7 @@ class GridMenu extends Component {
                 <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPress={() => this.performLogOut()} ></Header>
             )}
             />
-    
+            </View>
         );
     };
 
@@ -69,7 +78,8 @@ class GridMenu extends Component {
         return 'https://dev-pradeep.ez2xs.com/call/api.logoutAll?' + querystring;
       }
     performLogOut(){
-        DefaultPreference.get('magic').then((value) => this.setState(magic,value));
+        this.setState({progressVisible:true});
+        DefaultPreference.get('magic').then((value) => this.setState({magic:value}));
         const query = this.urlForLogOut();
         this.executeQuery(query);
     }
@@ -82,11 +92,17 @@ class GridMenu extends Component {
 
     logOut(response){
         console.log('response',response);
+        this.setState({progressVisible:false});
         Actions.auth();
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: "column",
+      backgroundColor: '#fff',
+    },
     gridView: {
       paddingTop: 0,
       flex: 1,

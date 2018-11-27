@@ -6,8 +6,13 @@ import axios from 'axios';
 import { sha256 } from 'react-native-sha256';
 import * as Animatable from "react-native-animatable";
 import DefaultPreference from 'react-native-default-preference';
+import URLSearchParams from 'url-search-params';
+import DeviceInfo from 'react-native-device-info';
+import { ProgressDialog } from 'react-native-simple-dialogs';
 
-import { WebView,
+import { 
+    Platform,
+    WebView,
     AppRegistry,
     StyleSheet,
     Dimensions,
@@ -26,7 +31,9 @@ export default class Scanner extends Component{
   state = { willReactivate: true,
             preAuth:'',
             udid:'',
-             authToken:''};
+             authToken:'',
+             progressVisible:false
+            };
 
   urlForQueryAndPage(deviceName,preAuth,udid) {
 
@@ -72,15 +79,21 @@ export default class Scanner extends Component{
   }
 
   executeQuery(urlString){
+    this.setState({progressVisible:true});
     axios.get(urlString)
     .then(response => this.getMagicToken(response));
     
   }
 
   proceedToFingerPrint(response){
-    DefaultPreference.set('magic', response.data.MAGIC).then(() => {console.log('done')});
-    console.log('response',response.data);
-    Actions.fingerPrintPage();
+    this.setState({progressVisible:false});
+    DefaultPreference.set('magic', response.data.MAGIC).then(() => {
+      console.log('platform',Platform.OS);
+      Platform.OS === 'android' ?Actions.fingerPrintPage(): Actions.fingerPrintPage();
+
+      console.log('response',response.data);
+    });
+
   }
 
   performLoginAPI(urlString){
@@ -107,36 +120,40 @@ export default class Scanner extends Component{
   }
     render() {
         return(
+          <View style={styles.container}>
+          <ProgressDialog 
+          visible={this.state.progressVisible} 
+          message="Please, wait..."
+         />  
             <QRCodeScanner 
             reactivate = {this.state.willReactivate}
             reactivateTimeout = {5000}
             showMarker = {true}
-            bottomContent= {<TouchableHighlight onPress={(e)=>Actions.pop()}>
+            bottomContent= {<TouchableHighlight style={styles.footerStyle} onPress={(e)=>Actions.pop()}>
                             <Text style={styles.textStyle}>
                               Cancel
                             </Text>
                             </TouchableHighlight>}
-            cameraStyle={{ height: Dimensions.get('window').height -64, marginTop:0 }}
+            cameraStyle={{ height: Dimensions.get('window').height, marginTop:0 }}
             onRead={(e) =>{
-              var DeviceUUID = require("react-native-device-uuid");
-              DeviceUUID.getUUID().then((uuid) => {
-              console.log('uuid',uuid);
-              this.setState({udid:uuid})
-              const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
-              console.log('query',query);
-              this.executeQuery(query);
-              });
               console.log('QR code scanned!', e);
+              const uniqueId = DeviceInfo.getUniqueID();
+              console.log('uniqueId',uniqueId);
+              this.setState({udid:uniqueId})
+
         
               var urlParams = new URLSearchParams(e.data);
               var values = urlParams.values();
                 for(value of values) { 
+                  if(value != 'Apple APP')
                   console.log(value);
                   sha256(value).then( hash => {
                     console.log('hash',hash)
                     this.setState({preAuth:hash})
+                    const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
+                    console.log('query',query);
+                    this.executeQuery(query);
                   })
-
                 }
 
 
@@ -175,13 +192,8 @@ export default class Scanner extends Component{
                 <View style={styles.bottomOverlay} />
               </View>
             }
-    
-          //   onRead={(e) =>{
-          //     console.log('QR code scanned!', e);
-              
-          // }}
-
             />  
+          </View>
         );
     }
 }
@@ -200,8 +212,20 @@ const scanBarColor = "#22ff00";
 const iconScanColor = "blue";
 
 const styles = {
+  container: {
+    flex: 1,
+    flexDirection: "column",  
+  backgroundColor: '#fff',
+},
     textStyle:{
-        color: '#2196F3'
+        color: '#2196F3',
+        marginTop:20
+    },
+    footerStyle:{
+      height: 88,
+      backgroundColor:'#ddd',
+      alignSelf: 'stretch',
+      alignItems: 'center',
     },
   rectangleContainer: {
     flex: 1,

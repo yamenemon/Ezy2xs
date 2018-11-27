@@ -3,6 +3,7 @@ package com.mysampleapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.azendoo.reactnativesnackbar.SnackbarPackage;
 import com.sha256lib.Sha256Package;
 import com.oblador.keychain.KeychainPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
             new SnackbarPackage(),
             new Sha256Package(),
             new KeychainPackage(),
