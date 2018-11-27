@@ -8,11 +8,26 @@ import { View } from 'react-native-animatable';
 
 class FingerPrintScannerPage extends Component{
 
+    constructor() {
+        super()
+    
+        this.state = {
+          biometryType: null
+        };
+      }
+
     dismissHandlePopUp() {
         console.log("handlePopupDismissed");
     }
 
     componentDidMount() {
+
+        FingerprintScanner
+        .isSensorAvailable()
+        .then(biometryType => this.setState({ biometryType }))
+        .catch(error => this.setState({ errorMessage: error.message }));
+    
+
         FingerprintScanner
         .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
         .then(() => {

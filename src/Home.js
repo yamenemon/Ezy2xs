@@ -15,8 +15,8 @@ export default class Home extends Component{
       title: 'Device need authorization',
       duration: Snackbar.LENGTH_SHORT,
     });
-    
   }
+  
     render(){
         return(
             <View style={styles.container}>
