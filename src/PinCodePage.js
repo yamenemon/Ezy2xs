@@ -7,7 +7,8 @@ import DefaultPreference from 'react-native-default-preference';
 export default class PinCodePage extends Component{
 
     state={pinCodeType:"choose",
-            hasUserSetPin:'false'};
+            hasUserSetPin:'false run-android'};
+            
     componentWillMount(){
         console.log('hasUserSetPinCode',hasUserSetPinCode);
         DefaultPreference.get('pincode').then((value) => this.setpinCodeType(value));

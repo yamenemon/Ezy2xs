@@ -14,6 +14,78 @@ class GridMenu extends Component {
     state = { magic:'',
              progressVisible:false
             };
+
+    componentWillMount() {
+        this.setState({progressVisible:true});
+        DefaultPreference.get('magic').then((value) => this.fetchPortalItems(value));
+
+
+    }
+
+    fetchPortalItems(value){
+        this.setState({magic:value});
+        const query = this.urlToFetchPortalItems();
+        console.log("urlToFetchPortalItems",query);
+        this.executeQuery(query,true);
+    }
+
+    urlForLogOut() {
+        const data = {
+            MAGIC:this.state.magic
+        };
+        // data[key] = value;
+        const querystring = Object.keys(data)
+          .map(key => key + '=' + encodeURIComponent(data[key]))
+          .join('&');
+        return 'https://dev-pradeep.ez2xs.com/call/api.logoutAll?' + querystring;
+      }
+
+      urlToFetchPortalItems() {
+        const data = {
+            MAGIC:this.state.magic
+        };
+        // data[key] = value;
+        const querystring = Object.keys(data)
+          .map(key => key + '=' + encodeURIComponent(data[key]))
+          .join('&');
+        return 'https://dev-pradeep.ez2xs.com/call/api.getMedewerkerInfo?' + querystring;
+      }
+
+    performLogOut(){
+        this.setState({progressVisible:true});
+        const query = this.urlForLogOut();
+        this.executeQuery(query,false);
+    }
+    
+
+    executeQuery(urlString,isFetchPortal){
+        console.log('isFetchPortal',isFetchPortal);
+
+        if(isFetchPortal)
+        {
+            axios.get(urlString)
+            .then(response => this.finishFetchinPortalItems(response)
+            );
+        }else{
+            axios.get(urlString)
+            .then(response => this.logOut(response)
+            );
+        }
+    }
+
+    finishFetchinPortalItems(response){
+        console.log('response',response.data.nportal.release);
+        this.setState({progressVisible:false});
+
+
+    }
+
+    logOut(response){
+        console.log('response',response);
+        this.setState({progressVisible:false});
+        Actions.auth();
+    }
+
     render(){
         const items = [
             { name: 'TURQUOISE', code: '#676767' }, { name: 'EMERALD', code: '#2ecc71' },
@@ -40,19 +112,19 @@ class GridMenu extends Component {
                 {
                 title: 'Title1',
                 data: [
-                    { name: 'TURQUOISE', code: '#676767', highlighColor: '#f4a30b',image:'web' }, { name: 'NEPHRITIS', code: '#676767',highlighColor: '#f4a30b',image:'web' },
-                     { name: 'EMERALD', code: '#676767', highlighColor: '#f4a30b',image:'helpoutline'}, { name: 'AMETHYST', code: '#414141',highlighColor: '#f4a30b',image:'folder' },
+                    { name: 'TURQUOISE', code: '#676767', highlighColor: '#f4a30b',image:'newspaper-o' }, { name: 'NEPHRITIS', code: '#676767',highlighColor: '#f4a30b',image:'qrcode' },
+                     { name: 'EMERALD', code: '#676767', highlighColor: '#f4a30b',image:'question-circle'}, { name: 'AMETHYST', code: '#414141',highlighColor: '#f4a30b',image:'folder-open' },
                       { name: 'AMETHYST', code: '#414141',highlighColor: '#f4a30b',image:'gavel' },
-                    { name: 'WET ASPHALT', code: '#414141',highlighColor: '#f4a30b',image:'smartphone' }, { name: 'GREEN SEA', code: '#414141',highlighColor: '#f4a30b',image:'web' },
-                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'checkbox' },  { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'timer' }, 
-                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'eurosymbol' }, { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'web' },
-                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'trendingup' },
+                    { name: 'WET ASPHALT', code: '#414141',highlighColor: '#f4a30b',image:'calculator' }, { name: 'GREEN SEA', code: '#414141',highlighColor: '#f4a30b',image:'id-card' },
+                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'check-square' },  { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'clock-o' }, 
+                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'euro' }, { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'newspaper-o' },
+                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'line-chart' },
                 ]
                 }
             ]}
             style={styles.gridView}
             renderItem={({ item }) => (
-                <GridItem colorCode={item.code} imageName={item.image} highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Actions.portalPage({webUrl:"https://www.google.com"})}></GridItem>
+                <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Actions.portalPage({webUrl:"https://www.google.com"})}></GridItem>
                 // <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 // <Text style={styles.itemName}>{item.name}</Text>
                 // <Text style={styles.itemCode}>{item.code}</Text>
@@ -66,35 +138,6 @@ class GridMenu extends Component {
         );
     };
 
-    urlForLogOut() {
-
-        const data = {
-            MAGIC:this.state.magic
-        };
-        // data[key] = value;
-        const querystring = Object.keys(data)
-          .map(key => key + '=' + encodeURIComponent(data[key]))
-          .join('&');
-        return 'https://dev-pradeep.ez2xs.com/call/api.logoutAll?' + querystring;
-      }
-    performLogOut(){
-        this.setState({progressVisible:true});
-        DefaultPreference.get('magic').then((value) => this.setState({magic:value}));
-        const query = this.urlForLogOut();
-        this.executeQuery(query);
-    }
-
-    executeQuery(urlString){
-        axios.get(urlString)
-        .then(response => this.logOut(response));
-        
-    }
-
-    logOut(response){
-        console.log('response',response);
-        this.setState({progressVisible:false});
-        Actions.auth();
-    }
 }
 
 const styles = StyleSheet.create({

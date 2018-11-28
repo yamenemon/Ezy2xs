@@ -9,6 +9,7 @@ import DefaultPreference from 'react-native-default-preference';
 import URLSearchParams from 'url-search-params';
 import DeviceInfo from 'react-native-device-info';
 import { ProgressDialog } from 'react-native-simple-dialogs';
+import Snackbar from 'react-native-snackbar';
 
 import { 
     Platform,
@@ -89,11 +90,10 @@ export default class Scanner extends Component{
     this.setState({progressVisible:false});
     DefaultPreference.set('magic', response.data.MAGIC).then(() => {
       console.log('platform',Platform.OS);
-      Platform.OS === 'android' ?Actions.fingerPrintPage(): Actions.fingerPrintPage();
+      Platform.OS === 'android' ?Actions.androidFingerPrint(): Actions.fingerPrintPage();
 
       console.log('response',response.data);
     });
-
   }
 
   performLoginAPI(urlString){
@@ -101,22 +101,36 @@ export default class Scanner extends Component{
     .then(response => this.proceedToFingerPrint(response));
   }
 
+  showErrorMessage(){
+    Snackbar.show({
+      title: 'No valid qr code found',
+      duration: Snackbar.LENGTH_SHORT,
+    });
+    Actions.pop();
+  }
+
   getMagicToken(response){
-    console.log('auth',response.data.auth);
-    this.setState({ authToken: response.data.auth });
-    var randomString = require('random-string');
-    var salt = randomString({length: 6});
-    const authAppendedString = salt + this.state.authToken;
-    console.log('authAppendedString',authAppendedString);
 
-    sha256(authAppendedString).then( hash => {
-      console.log('hash',hash);
-      this.setState({authToken:hash});
-      const loginQuery = this.urlForLogin(salt);
-      console.log('loginquery',loginQuery);
-      this.performLoginAPI(loginQuery);
-    })
+    console.log('auth',response.status);
 
+    if(response.status === 200)
+    {
+      this.setState({ authToken: response.data.auth });
+      var randomString = require('random-string');
+      var salt = randomString({length: 6});
+      const authAppendedString = salt + this.state.authToken;
+      console.log('authAppendedString',authAppendedString);
+  
+      sha256(authAppendedString).then( hash => {
+        console.log('hash',hash);
+        this.setState({authToken:hash});
+        const loginQuery = this.urlForLogin(salt);
+        console.log('loginquery',loginQuery);
+        this.performLoginAPI(loginQuery);
+      })
+    }else{
+      this.showErrorMessage();
+    }
   }
     render() {
         return(
@@ -126,8 +140,6 @@ export default class Scanner extends Component{
           message="Please, wait..."
          />  
             <QRCodeScanner 
-            reactivate = {this.state.willReactivate}
-            reactivateTimeout = {5000}
             showMarker = {true}
             bottomContent= {<TouchableHighlight style={styles.footerStyle} onPress={(e)=>Actions.pop()}>
                             <Text style={styles.textStyle}>
@@ -140,25 +152,27 @@ export default class Scanner extends Component{
               const uniqueId = DeviceInfo.getUniqueID();
               console.log('uniqueId',uniqueId);
               this.setState({udid:uniqueId})
+              const qrcodeData = String(e.data);
 
-        
-              var urlParams = new URLSearchParams(e.data);
-              var values = urlParams.values();
-                for(value of values) { 
-                  if(value != 'Apple APP')
-                  console.log(value);
-                  sha256(value).then( hash => {
-                    console.log('hash',hash)
-                    this.setState({preAuth:hash})
-                    const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
-                    console.log('query',query);
-                    this.executeQuery(query);
-                  })
+                if(qrcodeData.includes("preauth")){
+                  var urlParams = new URLSearchParams(e.data);
+                  var values = urlParams.values();
+                    for(value of values) { 
+                      if(value != 'Apple APP')
+                      console.log(value);
+                      sha256(value).then( hash => {
+                        console.log('hash',hash)
+                        this.setState({preAuth:hash})
+                        const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
+                        console.log('query',query);
+                        this.executeQuery(query);
+                      })
+                    }
+                  }else{
+                    this.showErrorMessage();
+                  }
                 }
-
-
               }
-            }
             customMarker={
               <View style={styles.rectangleContainer}>
                 <View style={styles.topOverlay}>
@@ -222,7 +236,7 @@ const styles = {
         marginTop:20
     },
     footerStyle:{
-      height: 88,
+      height: Platform.OS === 'android' ? 160 : 80,
       backgroundColor:'#ddd',
       alignSelf: 'stretch',
       alignItems: 'center',

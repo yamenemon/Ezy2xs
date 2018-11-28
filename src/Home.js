@@ -6,17 +6,20 @@ import CardItem from './components/CardItem';
 import GridItem from './components/GridItem';
 import { Actions } from 'react-native-router-flux';
 import Snackbar from 'react-native-snackbar';
-import QrCodeFooter from './components/QrCodeFooter';
+import {Icons,parseIconName} from 'react-native-fontawesome';
+
 
 export default class Home extends Component{
 
   componentWillMount(){
+    // const validIcon = parseIconFromClassName('fas fa-chevron-left') // will be parsed to chevronLeft
+
     Snackbar.show({
       title: 'Device need authorization',
       duration: Snackbar.LENGTH_SHORT,
     });
-    
   }
+
     render(){
         return(
             <View style={styles.container}>
@@ -30,8 +33,8 @@ export default class Home extends Component{
             <Text style={styles.titleContainer}>• Select the option 'Change Password'</Text>
             <Text style={styles.titleContainer}>• Scan the qr code</Text>
             <View style={styles.gridContainer}>
-            <GridItem  colorCode="#676767"  imageName='web' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://www.google.com"})}></GridItem>
-            <GridItem  colorCode="#f50a0a" imageName='forward' highlightColor="#dddddd" onPress={() => Actions.scannerPage()}></GridItem>
+            <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://www.google.com"})}></GridItem>
+            <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => Actions.scannerPage()}></GridItem>
             </View>
             </CardItem>
             </View>
