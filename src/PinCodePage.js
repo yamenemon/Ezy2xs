@@ -8,6 +8,7 @@ export default class PinCodePage extends Component{
 
     state={pinCodeType:"choose",
             hasUserSetPin:'false run-android'};
+            
     componentWillMount(){
         console.log('hasUserSetPinCode',hasUserSetPinCode);
         DefaultPreference.get('pincode').then((value) => this.setpinCodeType(value));

@@ -1,6 +1,8 @@
 import React , { Components } from 'react';
-import { Image,View,TouchableOpacity,TouchableHighlight } from 'react-native';
+import { Image,View,TouchableHighlight, Text } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { Icon } from 'react-native-elements'
+
 
 const GridItem = (props) =>{
 
@@ -9,8 +11,12 @@ const GridItem = (props) =>{
     return(
         <View style={[styles.itemContainer, { backgroundColor:props.colorCode}]}>
         <TouchableHighlight style={styles.imageContainer} underlayColor={props.highlightColor} onPress={props.onPress}>
-            <Image source={{uri: props.imageName }} style={styles.imageStyle}>
-            </Image>
+        <Icon
+        size={40}
+            name={props.imageName}
+            type='font-awesome'
+            color='#fff'
+           />
         </TouchableHighlight>
         </View>
     );
@@ -31,6 +37,8 @@ styles = {
         alignItems: 'center',
         flex:1,
         borderRadius: 5,
+        alignSelf: "stretch",
+        
 
       },
       imageStyle: {

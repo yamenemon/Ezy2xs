@@ -90,7 +90,7 @@ export default class Scanner extends Component{
     this.setState({progressVisible:false});
     DefaultPreference.set('magic', response.data.MAGIC).then(() => {
       console.log('platform',Platform.OS);
-      Platform.OS === 'android' ?Actions.fingerPrintPage(): Actions.fingerPrintPage();
+      Platform.OS === 'android' ?Actions.androidFingerPrint(): Actions.fingerPrintPage();
 
       console.log('response',response.data);
     });
@@ -236,7 +236,7 @@ const styles = {
         marginTop:20
     },
     footerStyle:{
-      height: 88,
+      height: Platform.OS === 'android' ? 160 : 80,
       backgroundColor:'#ddd',
       alignSelf: 'stretch',
       alignItems: 'center',
