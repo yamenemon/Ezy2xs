@@ -74,7 +74,7 @@ class GridMenu extends Component {
     }
 
     finishFetchinPortalItems(response){
-        console.log('response',response.data.nportal.release);
+        console.log('response',response.data);
         this.setState({progressVisible:false});
 
 
@@ -124,7 +124,7 @@ class GridMenu extends Component {
             ]}
             style={styles.gridView}
             renderItem={({ item }) => (
-                <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Actions.portalPage({webUrl:"https://www.google.com"})}></GridItem>
+                <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#release"})}></GridItem>
                 // <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 // <Text style={styles.itemName}>{item.name}</Text>
                 // <Text style={styles.itemCode}>{item.code}</Text>

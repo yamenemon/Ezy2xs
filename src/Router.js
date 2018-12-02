@@ -9,6 +9,7 @@ import PinCodePage from './PinCodePage';
 import WebPage from './WebPage';
 import PortalPage from './PortalPage';
 import AndroidFingerPrint from './AndroidFingerPrint';
+import LoginPage from './LoginPage';
 
 const RouterComponent = () =>{
     return(
@@ -16,7 +17,8 @@ const RouterComponent = () =>{
             <Scene key='root' hideNavBar>
                 <Scene key="auth" initial>
                 <Modal hideNavBar>
-                <Scene key="login"  component={Home} hideNavBar ></Scene>
+                <Scene key="loginPage"  component={LoginPage} hideNavBar ></Scene>
+                 <Scene key="login"  component={Home} hideNavBar ></Scene>
                 <Scene key="scannerPage" component={Scanner} title='Scan QR code' hideNavBar>
                 </Scene>
                 </Modal>

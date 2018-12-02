@@ -13,23 +13,22 @@ const Button = (props) => {
 
 const styles = {
     buttonStyle: {
-        flex: 1,
-        alignSelf: 'stretch',
         backgroundColor: '#fff',
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: '#007aff',
-        marginLeft: 5,
-        marginRight: 5,
+        borderColor: '#f4a30b',
+        marginLeft: 20,
+        marginRight: 20,
+        height: 54,
     },
 
     titleStyle: {
         alignSelf: 'center',
-        color: '#007aff',
+        color: '#f4a30b',
         fontSize: 16,
         fontWeight: '600',
-        paddingTop: 10,
-        paddingBottom: 10
+        paddingTop: 19,
+        paddingBottom: 19
 
     }
 }

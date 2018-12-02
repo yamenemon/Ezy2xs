@@ -111,7 +111,7 @@ export default class Scanner extends Component{
 
   getMagicToken(response){
 
-    console.log('auth',response.status);
+    console.log('auth',response);
 
     if(response.status === 200)
     {
