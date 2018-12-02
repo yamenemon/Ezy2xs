@@ -24,7 +24,7 @@ export default class Home extends Component{
         return(
             <View style={styles.container}>
             <ScrollView>
-            <Header style={styles.contentContainer}>
+            <Header>
             </Header>
             <View>
             <CardItem style={styles.containerStyle}>
@@ -33,7 +33,7 @@ export default class Home extends Component{
             <Text style={styles.titleContainer}>• Select the option 'Change Password'</Text>
             <Text style={styles.titleContainer}>• Scan the qr code</Text>
             <View style={styles.gridContainer}>
-            <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://www.google.com"})}></GridItem>
+            <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#release"})}></GridItem>
             <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => Actions.scannerPage()}></GridItem>
             </View>
             </CardItem>
