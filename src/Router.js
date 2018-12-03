@@ -11,23 +11,23 @@ import PortalPage from './PortalPage';
 import AndroidFingerPrint from './AndroidFingerPrint';
 import LoginPage from './LoginPage';
 
-const RouterComponent = () =>{
+const RouterComponent = (props) =>{
     return(
         <Router>
             <Scene key='root' hideNavBar>
-                <Scene key="auth" initial>
+                <Scene key="auth" initial={props.isAuthInitial}>
                 <Modal hideNavBar>
-                <Scene key="loginPage"  component={LoginPage} hideNavBar ></Scene>
-                 <Scene key="login"  component={Home} hideNavBar ></Scene>
+                <Scene key="login"  component={Home} hideNavBar ></Scene>
                 <Scene key="scannerPage" component={Scanner} title='Scan QR code' hideNavBar>
                 </Scene>
                 </Modal>
+                <Scene key="loginPage"  component={LoginPage}  ></Scene>
                 <Scene key="webPage" component={WebPage} title='WebView' />
                 <Scene key="fingerPrintPage" component={FingerPrintScannerPage} title='Authenticate Using FingerPrint' />
                 <Scene key="androidFingerPrint" component={AndroidFingerPrint} title='Authenticate Using FingerPrint' hideNavBar />
                 <Scene key="pinCodePage" component={PinCodePage} title='Authenticate Using PinCode'/> 
                 </Scene>
-                <Scene key="main">
+                <Scene key="main" initial={props.isMainInitial}>
                 <Scene key="gridMenu" 
                 rightButtonImage={<Image source={{uri: 'dropdown'}}></Image>}
                 component={GridMenu} 

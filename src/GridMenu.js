@@ -5,17 +5,24 @@ import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
 import axios from 'axios';
 import { ProgressDialog } from 'react-native-simple-dialogs';
-
+import { 
+    parseIconFromClassName 
+  } from 'react-native-fontawesome';
+  
 
 import GridItem from './components/GridItem';
 import Header from './components/Header';
 class GridMenu extends Component {
 
     state = { magic:'',
-             progressVisible:false
+             progressVisible:false,
+             portalItems: [{ naam: 'release', code: '#676767', link:"", icon:"newspaper-o" },{ naam: 'qrcodescan', code: '#676767',icon:"qrcode",link:"" },{ naam: 'help', code: '#676767', icon:"question-circle",link:"" }]
             };
-
+    
     componentWillMount() {
+        const strInputCode = "<i class=\"fa fa-folder-open\"></i>"
+        const cleanText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+        console.log("validIcon",cleanText);
         this.setState({progressVisible:true});
         DefaultPreference.get('magic').then((value) => this.fetchPortalItems(value));
 
@@ -74,15 +81,42 @@ class GridMenu extends Component {
     }
 
     finishFetchinPortalItems(response){
-        console.log('response',response.data);
+        console.log('response',response.data.nportal);
+        var convertedArray = this.json2array(response.data.nportal);
+        convertedArray.forEach(element => {
+            element.code = "#414141";
+           var b = element.icon.split(" ");
+           var c = b[2].substr(b[2].indexOf("-")+1);
+           if(c.includes("\"></i>")){
+             var d =  c.replace("\"></i>","");
+             element.icon = d;
+           }else{
+               element.icon = c;
+           }    
+           this.state.portalItems.push(element);
+        });
+        // convertedArray = this.state.portalItems.push(convertedArray);
+        this.setState({portalItems:this.state.portalItems});
+        console.log('portalItems',this.state.portalItems);
         this.setState({progressVisible:false});
 
 
     }
 
+     json2array(json){
+        var result = [];
+        var keys = Object.keys(json);
+        keys.forEach(function(key){
+            result.push(json[key]);
+        });
+        return result;
+    }
+    
+
     logOut(response){
         console.log('response',response);
         this.setState({progressVisible:false});
+        DefaultPreference.set('magic','').then(function() {console.log('done')});
         Actions.auth();
     }
 
@@ -111,20 +145,13 @@ class GridMenu extends Component {
             sections={[
                 {
                 title: 'Title1',
-                data: [
-                    { name: 'TURQUOISE', code: '#676767', highlighColor: '#f4a30b',image:'newspaper-o' }, { name: 'NEPHRITIS', code: '#676767',highlighColor: '#f4a30b',image:'qrcode' },
-                     { name: 'EMERALD', code: '#676767', highlighColor: '#f4a30b',image:'question-circle'}, { name: 'AMETHYST', code: '#414141',highlighColor: '#f4a30b',image:'folder-open' },
-                      { name: 'AMETHYST', code: '#414141',highlighColor: '#f4a30b',image:'gavel' },
-                    { name: 'WET ASPHALT', code: '#414141',highlighColor: '#f4a30b',image:'calculator' }, { name: 'GREEN SEA', code: '#414141',highlighColor: '#f4a30b',image:'id-card' },
-                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'check-square' },  { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'clock-o' }, 
-                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'euro' }, { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'newspaper-o' },
-                    { name: 'NEPHRITIS', code: '#414141',highlighColor: '#f4a30b',image:'line-chart' },
-                ]
+                data: this.state.portalItems
                 }
             ]}
             style={styles.gridView}
             renderItem={({ item }) => (
-                <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#release"})}></GridItem>
+                // <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Linking.openURL("https://dev-pradeep.ez2xs.com/n/#auditor")}></GridItem>
+                <GridItem colorCode={item.code} imageName={item.icon}   onPress={() => Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/#" + item.link})}></GridItem>
                 // <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 // <Text style={styles.itemName}>{item.name}</Text>
                 // <Text style={styles.itemCode}>{item.code}</Text>
