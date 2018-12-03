@@ -7,17 +7,29 @@ import GridItem from './components/GridItem';
 import { Actions } from 'react-native-router-flux';
 import Snackbar from 'react-native-snackbar';
 import {Icons,parseIconName} from 'react-native-fontawesome';
+import ActionSheet from 'react-native-actionsheet'
 
 
 export default class Home extends Component{
 
   componentWillMount(){
-    // const validIcon = parseIconFromClassName('fas fa-chevron-left') // will be parsed to chevronLeft
-
     Snackbar.show({
       title: 'Device need authorization',
       duration: Snackbar.LENGTH_SHORT,
     });
+  }
+
+  showActionSheet = () => {
+    this.ActionSheet.show()
+  }
+
+  takeAction(index){
+    if(index===0)
+    {
+      Actions.loginPage();
+    }else if(index===1){
+      Actions.scannerPage();
+    }
   }
 
     render(){
@@ -34,9 +46,16 @@ export default class Home extends Component{
             <Text style={styles.titleContainer}>• Scan the qr code</Text>
             <View style={styles.gridContainer}>
             <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#release"})}></GridItem>
-            <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => Actions.scannerPage()}></GridItem>
+            <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => this.showActionSheet()}></GridItem>
             </View>
             </CardItem>
+              <ActionSheet
+            ref={o => this.ActionSheet = o}
+            title={'How do you want to sign in?'}
+            options={['Using Credentials', 'Scanning QR Codes', 'cancel']}
+            cancelButtonIndex={2}
+            onPress={(index) => this.takeAction(index)}
+          />
             </View>
             </ScrollView>
           </View>
