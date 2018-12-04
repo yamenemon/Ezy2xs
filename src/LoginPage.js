@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,StyleSheet,ScrollView,Platform} from 'react-native';
+import {View,StyleSheet,ScrollView,Platform,KeyboardAvoidingView} from 'react-native';
 import FloatingLabel from 'react-native-floating-labels';
 import Header from './components/Header';
 import Button from './components/Button';
@@ -82,7 +82,7 @@ class LoginPage extends Component{
         this.setState({progressVisible:false});
                 DefaultPreference.set('magic', response.data.MAGIC).then(() => {
                     console.log('platform',Platform.OS);
-                    Platform.OS === 'android' ?Actions.androidFingerPrint(): Actions.fingerPrintPage();
+                    Platform.OS === 'android' ?Actions.main(): Actions.main();
             
                     console.log('response',response.data);
                 });
@@ -98,7 +98,7 @@ class LoginPage extends Component{
 
     render(){
         return(
-            <View style={styles.container}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
             <ProgressDialog 
             visible={this.state.progressVisible} 
             message="Please, wait..."
@@ -122,7 +122,7 @@ class LoginPage extends Component{
                     >Password</FloatingLabel>
             <Button buttonTitle='Login' onPress={()=>this.checkValidation()}></Button>
             </ScrollView>
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }

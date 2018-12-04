@@ -38,7 +38,7 @@ export default class PinCodePage extends Component{
         if(PinResultStatus.success)
         {
             DefaultPreference.set('pincode', 'true').then(() => {
-                Actions.main();
+                Actions.gridMenu();
               });
         }
     }

@@ -90,8 +90,7 @@ export default class Scanner extends Component{
     this.setState({progressVisible:false});
     DefaultPreference.set('magic', response.data.MAGIC).then(() => {
       console.log('platform',Platform.OS);
-      Platform.OS === 'android' ?Actions.androidFingerPrint(): Actions.fingerPrintPage();
-
+      Platform.OS === 'android' ?Actions.main(): Actions.main();
       console.log('response',response.data);
     });
   }
