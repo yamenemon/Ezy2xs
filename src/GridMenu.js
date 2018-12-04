@@ -16,7 +16,7 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'release', code: '#676767', link:"", icon:"newspaper-o" },{ naam: 'qrcodescan', code: '#676767',icon:"qrcode",link:"" },{ naam: 'help', code: '#676767', icon:"question-circle",link:"" }]
+             portalItems: [{ naam: 'release', code: '#676767', link:"", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#676767',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }]
             };
     
     componentWillMount() {
@@ -85,6 +85,7 @@ class GridMenu extends Component {
         var convertedArray = this.json2array(response.data.nportal);
         convertedArray.forEach(element => {
             element.code = "#414141";
+            element.highlightColor= "#f4a30b";
            var b = element.icon.split(" ");
            var c = b[2].substr(b[2].indexOf("-")+1);
            if(c.includes("\"></i>")){
@@ -120,6 +121,18 @@ class GridMenu extends Component {
         Actions.auth();
     }
 
+    performActionForGridItem(item){
+        console.log('GridItem',item.item);
+        console.log('itemnaam',item.naam);
+
+        if(item.item.naam=="qrcodescan"){
+            console.log("qrcodescan");
+            Actions.scan();
+        }else{
+            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/#" + item.link})
+        }
+    }
+    
     render(){
         const items = [
             { name: 'TURQUOISE', code: '#676767' }, { name: 'EMERALD', code: '#2ecc71' },
@@ -151,7 +164,7 @@ class GridMenu extends Component {
             style={styles.gridView}
             renderItem={({ item }) => (
                 // <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Linking.openURL("https://dev-pradeep.ez2xs.com/n/#auditor")}></GridItem>
-                <GridItem colorCode={item.code} imageName={item.icon}   onPress={() => Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/#" + item.link})}></GridItem>
+                <GridItem colorCode={item.code} imageName={item.icon} highlightColor={item.highlightColor}   onPress={() => this.performActionForGridItem({item})}></GridItem>
                 // <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 // <Text style={styles.itemName}>{item.name}</Text>
                 // <Text style={styles.itemCode}>{item.code}</Text>

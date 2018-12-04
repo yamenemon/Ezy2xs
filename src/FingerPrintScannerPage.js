@@ -28,7 +28,7 @@ class FingerPrintScannerPage extends Component{
         FingerprintScanner
         .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
         .then(() => {
-            Actions.main();
+            Actions.gridMenu();
         })
         .catch((error) => {
             this.setState({ errorMessage: error.message });
