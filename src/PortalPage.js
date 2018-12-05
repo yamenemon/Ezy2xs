@@ -4,14 +4,22 @@ import DefaultPreference from 'react-native-default-preference';
 
 export default class PortalPage extends Component{
     state = {
-        magicValue:""
+        magicValue:"",
+        url:"",
     }
     componentWillMount(){
-        DefaultPreference.get('magic').then((value) => this.setState({magicValue: value}));
+        DefaultPreference.get('magic').then((value) => this.setHeader(value));
+    }
+
+    setHeader(value){
+        this.setState({magicValue: value})
+        console.log("magic",this.state.magicValue)
+        
     }
     render(){
         return(
-            <WebView source={{uri:this.props.webUrl, headers:{ "custom-app-header": "react-native-ios-app",Authorization: "MAGIC " + this.state.magicValue}}}></WebView>
+            <WebView 
+            source={{uri:this.props.webUrl, headers:{"Authorization":"MAGIC "+this.state.magicValue,"Content-Type":"application/json"}}}></WebView>
         );
     }
 }

@@ -1,7 +1,6 @@
 import React , {Component} from 'react';
 import PropTypes from 'prop-types';
 import Header from './components/Header';
-import { AlertIOS,StyleSheet,Platform,Image,Text } from 'react-native';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import { Actions } from 'react-native-router-flux';
 import { View } from 'react-native-animatable';
@@ -34,7 +33,7 @@ class FingerPrintScannerPage extends Component{
             this.setState({ errorMessage: error.message });
             Actions.pinCodePage();
         });
-  
+
     }
     render() {
         const { errorMessage } = this.state;

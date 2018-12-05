@@ -24,8 +24,8 @@ const RouterComponent = (props) =>{
                 <Scene key="scannerPage" component={Scanner} title='Scan QR code' hideNavBar/>
                 </Scene>
                 <Scene key="main" initial={props.isMainInitial}>
-                <Scene key="fingerPrintPage" component={FingerPrintScannerPage} title='Authenticate Using FingerPrint' initial/>
-                <Scene key="androidFingerPrint" component={AndroidFingerPrint} title='Authenticate Using FingerPrint' hideNavBar />
+                <Scene key="fingerPrintPage" component={FingerPrintScannerPage} title='Authenticate Using FingerPrint' />
+                <Scene key="androidFingerPrint" component={AndroidFingerPrint} title='Authenticate Using FingerPrint' initial hideNavBar />
                 <Scene key="pinCodePage" component={PinCodePage} title='Authenticate Using PinCode'/> 
                 <Scene key="gridMenu" 
                 rightButtonImage={<Image source={{uri: 'dropdown'}}></Image>}
