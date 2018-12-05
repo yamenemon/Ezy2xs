@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image,Platform } from 'react-native';
 import { Scene, Router, Modal } from 'react-native-router-flux';
 import Home from './Home';
 import GridMenu from './GridMenu';
@@ -24,8 +24,8 @@ const RouterComponent = (props) =>{
                 <Scene key="scannerPage" component={Scanner} title='Scan QR code' hideNavBar/>
                 </Scene>
                 <Scene key="main" initial={props.isMainInitial}>
-                <Scene key="fingerPrintPage" component={FingerPrintScannerPage} title='Authenticate Using FingerPrint' />
-                <Scene key="androidFingerPrint" component={AndroidFingerPrint} title='Authenticate Using FingerPrint' initial hideNavBar />
+                <Scene key="fingerPrintPage" component={FingerPrintScannerPage} title='Authenticate Using FingerPrint' initial={Platform.OS==="ios"?true:false}/>
+                <Scene key="androidFingerPrint" component={AndroidFingerPrint} title='Authenticate Using FingerPrint' initial={Platform.OS==="android"?true:false} hideNavBar />
                 <Scene key="pinCodePage" component={PinCodePage} title='Authenticate Using PinCode'/> 
                 <Scene key="gridMenu" 
                 rightButtonImage={<Image source={{uri: 'dropdown'}}></Image>}

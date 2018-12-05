@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, ScrollView, View, Text,BackHandler} from 'react-native';
+import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid} from 'react-native';
 import Button from './components/Button';
 import Header from './components/Header';
 import CardItem from './components/CardItem';
@@ -27,6 +27,7 @@ export default class Home extends Component{
   }
 
   handleBackButton = () => {
+    BackAndroid.exitApp();
     return true;
 }
 

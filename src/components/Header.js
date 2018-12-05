@@ -5,7 +5,7 @@ import {Actions} from 'react-native-router-flux';
 const Header =  (props) =>{
     return(
         <View style={styles.container}> 
-                 <TouchableOpacity style={styles.logOut} onPress={()=>Actions.main()}>
+                 <TouchableOpacity style={styles.logOut} onPress={props.onPressExit}>
                     <Image source={props.logoutIconName}></Image>
                 </TouchableOpacity>
             <View style={styles.contentContainer}>

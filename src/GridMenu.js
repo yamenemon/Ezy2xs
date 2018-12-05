@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Image} from 'react-native';
+import {Platform, StyleSheet, BackAndroid, View} from 'react-native';
 import { SuperGridSectionList, GridView  } from 'react-native-super-grid';
 import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
 import axios from 'axios';
 import { ProgressDialog } from 'react-native-simple-dialogs';
+import Snackbar from 'react-native-snackbar';
+
 import { 
     parseIconFromClassName 
   } from 'react-native-fontawesome';
@@ -81,28 +83,39 @@ class GridMenu extends Component {
     }
 
     finishFetchinPortalItems(response){
-        console.log('response',response.data.nportal);
-        var convertedArray = this.json2array(response.data.nportal);
-        convertedArray.forEach(element => {
-            element.code = "#414141";
-            element.highlightColor= "#f4a30b";
-           var b = element.icon.split(" ");
-           var c = b[2].substr(b[2].indexOf("-")+1);
-           if(c.includes("\"></i>")){
-             var d =  c.replace("\"></i>","");
-             element.icon = d;
-           }else{
-               element.icon = c;
-           }    
-           this.state.portalItems.push(element);
-        });
-        // convertedArray = this.state.portalItems.push(convertedArray);
-        this.setState({portalItems:this.state.portalItems});
-        console.log('portalItems',this.state.portalItems);
-        this.setState({progressVisible:false});
-
-
+        if(response.status === 200){
+            console.log('response',response.data.nportal);
+            var convertedArray = this.json2array(response.data.nportal);
+            convertedArray.forEach(element => {
+                element.code = "#414141";
+                element.highlightColor= "#f4a30b";
+               var b = element.icon.split(" ");
+               var c = b[2].substr(b[2].indexOf("-")+1);
+               if(c.includes("\"></i>")){
+                 var d =  c.replace("\"></i>","");
+                 element.icon = d;
+               }else{
+                   element.icon = c;
+               }    
+               this.state.portalItems.push(element);
+            });
+            // convertedArray = this.state.portalItems.push(convertedArray);
+            this.setState({portalItems:this.state.portalItems});
+            console.log('portalItems',this.state.portalItems);
+            this.setState({progressVisible:false});
+        }else{
+            this.showErrorMessage("Authorization Failed");
+        }
     }
+
+    showErrorMessage(message){
+        Snackbar.show({
+          title: message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+        Actions.pop();
+      }
+    
 
      json2array(json){
         var result = [];
@@ -122,15 +135,15 @@ class GridMenu extends Component {
     }
 
     performActionForGridItem(item){
-        console.log('GridItem',item.link);
-        console.log('itemnaam',item.naam);
-
         if(item.item.naam=="qrcodescan"){
-            console.log("qrcodescan");
             Actions.scan();
         }else{
             Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#" + item.item.link})
         }
+    }
+
+    performAppExit(){
+        Platform.OS  === 'android' ?BackAndroid.exitApp(): Actions.main();
     }
     
     render(){
@@ -171,7 +184,7 @@ class GridMenu extends Component {
                 // </View>
             )}
             renderSectionHeader={({ section }) => (
-                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPress={() => this.performLogOut()} ></Header>
+                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()} ></Header>
             )}
             />
             </View>

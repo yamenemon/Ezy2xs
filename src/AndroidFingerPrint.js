@@ -67,7 +67,7 @@ class AndroidFingerPrint extends Component {
 
         <Icon
         styles={styles.logo}
-            name="fa-fingerprint"
+            name="fingerprint-o"
             size={40}
             type='font-awesome'
             color='#f50'
@@ -86,9 +86,6 @@ class AndroidFingerPrint extends Component {
             style={styles.buttonContainer}
             onPress={handlePopupDismissed}
           >
-            <Text style={styles.buttonText}>
-              BACK TO MAIN
-            </Text>
           </TouchableOpacity>
 
         </View>
