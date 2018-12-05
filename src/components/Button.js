@@ -24,6 +24,8 @@ const styles = {
 
     titleStyle: {
         alignSelf: 'center',
+        justifyContent: 'center',
+        width:60,
         color: '#f4a30b',
         fontSize: 16,
         fontWeight: '600',
