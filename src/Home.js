@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, ScrollView, View, Text} from 'react-native';
+import {Platform, StyleSheet, ScrollView, View, Text,BackHandler} from 'react-native';
 import Button from './components/Button';
 import Header from './components/Header';
 import CardItem from './components/CardItem';
@@ -15,9 +15,21 @@ export default class Home extends Component{
   componentWillMount(){
     Snackbar.show({
       title: 'Device needs authorization',
-      duration: Snackbar.LENGTH_SHORT,
+      duration: Snackbar.LENGTH_LONG,
     });
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+
   }
+
+  componentWillUnmount(){
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+
+  }
+
+  handleBackButton = () => {
+    return true;
+}
+
 
   showActionSheet = () => {
     this.ActionSheet.show()

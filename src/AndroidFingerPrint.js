@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
     Text,
   View,
-  ViewPropTypes
+  ViewPropTypes,
+  BackHandler
 } from 'react-native';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import { Actions } from 'react-native-router-flux';
@@ -25,6 +26,7 @@ class AndroidFingerPrint extends Component {
   }
 
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     FingerprintScanner
       .authenticate({ onAttempt: this.handleAuthenticationAttempted })
       .then(() => {
@@ -39,7 +41,13 @@ class AndroidFingerPrint extends Component {
       });
   }
 
+  handleBackButton = () => {
+    return true;
+}
+
+
   componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
     FingerprintScanner.release();
   }
 

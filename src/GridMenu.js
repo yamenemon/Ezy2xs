@@ -122,14 +122,14 @@ class GridMenu extends Component {
     }
 
     performActionForGridItem(item){
-        console.log('GridItem',item.item);
+        console.log('GridItem',item.link);
         console.log('itemnaam',item.naam);
 
         if(item.item.naam=="qrcodescan"){
             console.log("qrcodescan");
             Actions.scan();
         }else{
-            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/#" + item.link})
+            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#" + item.item.link})
         }
     }
     
