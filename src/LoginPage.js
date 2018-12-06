@@ -11,6 +11,10 @@ import axios from 'axios';
 
 class LoginPage extends Component{
 
+    static navigationOptions = ({ navigation }) => ({
+         headerTintColor:"#000000",
+         headerStyle: {tintColor:"#000000",backgroundColor:"#f4a30b"}
+        });
     state={
         emailString: "",
         passwordString: "",

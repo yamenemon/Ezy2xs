@@ -7,6 +7,14 @@ export default class PortalPage extends Component{
         magicValue:"",
         url:"",
     }
+
+    static navigationOptions = ({ navigation }) => ({
+        title: `${navigation.state.params.title}`,
+         headerTitleStyle : {textAlign: 'center',alignSelf:'center'},
+         headerTintColor:"#000000",
+         headerStyle: {tintColor:"#000000",backgroundColor:"#f4a30b"}
+        });
+    
     componentWillMount(){
         DefaultPreference.get('magic').then((value) => this.setHeader(value));
     }

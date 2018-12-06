@@ -15,15 +15,15 @@ const RouterComponent = (props) =>{
     return(
         <Router>
             <Scene key='root' hideNavBar>
-                <Scene key="auth" initial={props.isAuthInitial}>
-                <Scene key="login"  component={Home} hideNavBar ></Scene>
+                <Scene key="auth" initial={props.isAuthInitial} navigationBarStyle={{ backgroundColor: '#f4a30b' }}>
+                <Scene key="login"  component={Home} hideNavBar title="Home"></Scene>
                 <Scene key="loginPage"  component={LoginPage} title="Login"  ></Scene>
-                <Scene key="webPage" component={WebPage} title='WebView' />
+                <Scene key="webPage" component={WebPage} title='WebView'/>
                 </Scene>
                 <Scene Modal key='scan' hideNavBar>
-                <Scene key="scannerPage" component={Scanner} title='Scan QR code' hideNavBar/>
+                <Scene Modal key="scannerPage" component={Scanner} title='Scan QR Code' hideNavBar/>
                 </Scene>
-                <Scene key="main" initial={props.isMainInitial}>
+                <Scene key="main" initial={props.isMainInitial} navigationBarStyle={{ backgroundColor: '#f4a30b' }}>
                 <Scene key="fingerPrintPage" component={FingerPrintScannerPage} title='Authenticate Using FingerPrint' initial={Platform.OS==="ios"?true:false}/>
                 <Scene key="androidFingerPrint" component={AndroidFingerPrint} title='Authenticate Using FingerPrint' initial={Platform.OS==="android"?true:false} hideNavBar />
                 <Scene key="pinCodePage" component={PinCodePage} title='Authenticate Using PinCode'/> 

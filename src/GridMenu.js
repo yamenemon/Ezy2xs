@@ -84,6 +84,13 @@ class GridMenu extends Component {
         }
     }
 
+     camelize(str) {
+        return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
+          return index == 0 ? letter.toUpperCase() : letter.toLowerCase();
+        }).replace(/\s+/g, '');
+      }
+      
+
     finishFetchinPortalItems(response){
             console.log('response',response.data.nportal);
             var convertedArray = this.json2array(response.data.nportal);
@@ -97,8 +104,11 @@ class GridMenu extends Component {
                  element.icon = d;
                }else{
                    element.icon = c;
-               }    
+               } 
                this.state.portalItems.push(element);
+            });
+            this.state.portalItems.forEach(item => {
+                item.naam = this.camelize(item.naam);
             });
             // convertedArray = this.state.portalItems.push(convertedArray);
             this.setState({portalItems:this.state.portalItems});
@@ -136,10 +146,10 @@ class GridMenu extends Component {
     }
 
     performActionForGridItem(item){
-        if(item.item.naam=="qrcodescan"){
+        if(item.item.naam=="Qrcodescan"){
             Actions.scan();
         }else{
-            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/?MAGIC=" +this.state.magic+"#"+ item.item.link})
+            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/?MAGIC=" +this.state.magic+"#"+ item.item.link,title:item.item.naam})
         }
     }
 
@@ -178,7 +188,7 @@ class GridMenu extends Component {
             style={styles.gridView}
             renderItem={({ item }) => (
                 // <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Linking.openURL("https://dev-pradeep.ez2xs.com/n/#auditor")}></GridItem>
-                <GridItem colorCode={item.code} imageName={item.icon} highlightColor={item.highlightColor}   onPress={() => this.performActionForGridItem({item})}></GridItem>
+                <GridItem colorCode={item.code}  imageName={item.icon} highlightColor={item.highlightColor}   onPress={() => this.performActionForGridItem({item})}></GridItem>
                 // <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 // <Text style={styles.itemName}>{item.name}</Text>
                 // <Text style={styles.itemCode}>{item.code}</Text>
