@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import { WebView } from 'react-native';
+import { View,WebView,ActivityIndicator,StyleSheet } from 'react-native';
 import DefaultPreference from 'react-native-default-preference';
 
 export default class PortalPage extends Component{
     state = {
         magicValue:"",
         url:"",
+        visible:true
     }
 
     static navigationOptions = ({ navigation }) => ({
@@ -19,6 +20,10 @@ export default class PortalPage extends Component{
         DefaultPreference.get('magic').then((value) => this.setHeader(value));
     }
 
+    hideSpinner() {
+        this.setState({ visible: false });
+      }
+    
     setHeader(value){
         this.setState({magicValue: value})
         console.log("magic",this.state.magicValue)
@@ -26,8 +31,27 @@ export default class PortalPage extends Component{
     }
     render(){
         return(
+            <View style={styles.container}>
             <WebView 
+            onLoad={() => this.hideSpinner()}
             source={{uri:this.props.webUrl, headers:{"Authorization":"MAGIC "+this.state.magicValue,"Content-Type":"application/json"}}}></WebView>
+            {this.state.visible && (
+            <ActivityIndicator
+            style={{ position:"relative",alignSelf:"center",tintColor:"#f4a30b" }}
+                size="large"
+            />
+            )}
+
+            </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+      backgroundColor: '#fff',
+      alignItems: "stretch",
+      justifyContent: "center"
+    }
+});

@@ -30,7 +30,7 @@ const RouterComponent = (props) =>{
                 <Scene key="gridMenu" 
                 rightButtonImage={<Image source={{uri: 'dropdown'}}></Image>}
                 component={GridMenu} 
-                title='GridMenu'
+                title='Menu'
                 hideNavBar
                 />
                 <Scene key="portalPage" component={PortalPage} title='WebView'/>
