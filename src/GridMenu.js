@@ -18,7 +18,7 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'release', code: '#676767', link:"", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#676767',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }]
+             portalItems: [{ naam: 'release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#676767',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }]
             };
     
     componentWillMount() {
@@ -74,6 +74,8 @@ class GridMenu extends Component {
         {
             axios.get(urlString)
             .then(response => this.finishFetchinPortalItems(response)
+            ).catch(
+                (error) => this.showErrorMessage("Authorization Failed")
             );
         }else{
             axios.get(urlString)
@@ -83,7 +85,6 @@ class GridMenu extends Component {
     }
 
     finishFetchinPortalItems(response){
-        if(response.status === 200){
             console.log('response',response.data.nportal);
             var convertedArray = this.json2array(response.data.nportal);
             convertedArray.forEach(element => {
@@ -103,17 +104,17 @@ class GridMenu extends Component {
             this.setState({portalItems:this.state.portalItems});
             console.log('portalItems',this.state.portalItems);
             this.setState({progressVisible:false});
-        }else{
-            this.showErrorMessage("Authorization Failed");
-        }
     }
 
     showErrorMessage(message){
+        this.setState({progressVisible:false});
         Snackbar.show({
           title: message,
           duration: Snackbar.LENGTH_LONG,
         });
-        Actions.pop();
+        DefaultPreference.set('magic','').then(function() {console.log('done')});
+        Actions.auth();
+        
       }
     
 
@@ -138,7 +139,7 @@ class GridMenu extends Component {
         if(item.item.naam=="qrcodescan"){
             Actions.scan();
         }else{
-            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#" + item.item.link})
+            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/?MAGIC=" +this.state.magic+"#"+ item.item.link})
         }
     }
 
