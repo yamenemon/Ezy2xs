@@ -18,7 +18,7 @@ const RouterComponent = (props) =>{
                 <Scene key="auth" initial={props.isAuthInitial} navigationBarStyle={{ backgroundColor: '#f4a30b' }}>
                 <Scene key="login"  component={Home} hideNavBar title="Home"></Scene>
                 <Scene key="loginPage"  component={LoginPage} title="Login"  ></Scene>
-                <Scene key="webPage" component={WebPage} title='WebView'/>
+                <Scene key="webPage" component={WebPage} title='Release'/>
                 </Scene>
                 <Scene Modal key='scan' hideNavBar>
                 <Scene Modal key="scannerPage" component={Scanner} title='Scan QR Code' hideNavBar/>
