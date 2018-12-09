@@ -11,7 +11,7 @@ class FingerPrintScannerPage extends Component{
 
     constructor(props) {
         super(props);
-        this.state = { errorMessage: undefined,magic:'',progressVisible:false};
+        this.state = { errorMessage: undefined,magic:'',progressVisible:false,domainName:''};
       }
 
     dismissHandlePopUp() {
@@ -20,6 +20,7 @@ class FingerPrintScannerPage extends Component{
 
     componentDidMount() {
         DefaultPreference.get('magic').then((value) => this.setState({magic:value}));
+        DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
 
      FingerprintScanner
         .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
@@ -87,7 +88,7 @@ class FingerPrintScannerPage extends Component{
                     visible={this.state.progressVisible} 
                     message="Please, wait..."
                 />  
-                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()}></Header>
+                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()} domainName={this.state.domainName}></Header>
             </View>
             // Platform.select({
             //     ios:<Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} ></Header>,

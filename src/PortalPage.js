@@ -10,13 +10,13 @@ export default class PortalPage extends Component{
         visible:true
     }
 
-    static navigationOptions = ({ navigation }) => ({
-        title: `${navigation.state.params.title}`,
-        left: ( <Icon name={'chevron-left'}  /> ),
-         headerTitleStyle : {textAlign: 'center',alignSelf:'center'},
-         headerTintColor:"#000000",
-         headerStyle: {tintColor:"#000000",backgroundColor:"#f4a30b"}
-        });
+    // static navigationOptions = ({ navigation }) => ({
+    //     title: `${navigation.state.params.title}`,
+    //      headerTitleStyle : {textAlign: 'center',alignSelf:'center'},
+    //      headerTintColor:"#000000",
+
+    //      headerStyle: {tintColor:"#000000",backgroundColor:"#f4a30b"}
+    //     });
     
     componentWillMount(){
         DefaultPreference.get('magic').then((value) => this.setHeader(value));
@@ -33,7 +33,6 @@ export default class PortalPage extends Component{
     }
     render(){
         const jsCode = `document.getElementsByTagName('nav')[0].style.display='none';`;
-        console.log('jscode',jsCode);
         return(
             <View style={styles.container}>
             <WebView 

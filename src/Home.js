@@ -8,16 +8,20 @@ import { Actions } from 'react-native-router-flux';
 import Snackbar from 'react-native-snackbar';
 import {Icons,parseIconName} from 'react-native-fontawesome';
 import ActionSheet from 'react-native-actionsheet'
+import DefaultPreference from 'react-native-default-preference';
 
 
 export default class Home extends Component{
-
+ state = {
+    domainName: ""
+ }
   componentWillMount(){
     Snackbar.show({
       title: 'Device needs authorization',
       duration: Snackbar.LENGTH_LONG,
     });
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
 
   }
 
@@ -49,7 +53,7 @@ export default class Home extends Component{
         return(
             <View style={styles.container}>
             <ScrollView>
-            <Header>
+            <Header domainName={this.state.domainName}>
             </Header>
             <View>
             <CardItem style={styles.containerStyle}>

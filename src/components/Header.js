@@ -13,7 +13,7 @@ const Header =  (props) =>{
                 style={styles.logo}
                 source={require('./logo-app.png')} >
                 </Image>
-                <Text style={styles.textContainer}>ez2xs.ez2xs.com</Text>
+                <Text style={styles.textContainer}>{props.domainName}</Text>
             </View>
             <TouchableOpacity style={styles.logOut} onPress={props.onPress}>
                     <Image source={props.tvIconName}></Image>
@@ -39,6 +39,7 @@ const styles = {
       },
     textContainer: {
         marginTop: 25,
+        alignSelf:'center'
     },
     logo: {
       width: 100,

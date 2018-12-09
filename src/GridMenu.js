@@ -18,7 +18,8 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }]
+             portalItems: [{ naam: 'release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
+             domainName: ""
             };
     
     componentWillMount() {
@@ -27,8 +28,7 @@ class GridMenu extends Component {
         console.log("validIcon",cleanText);
         this.setState({progressVisible:true});
         DefaultPreference.get('magic').then((value) => this.fetchPortalItems(value));
-
-
+        DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
     }
 
     fetchPortalItems(value){
@@ -195,7 +195,7 @@ class GridMenu extends Component {
                 // </View>
             )}
             renderSectionHeader={({ section }) => (
-                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()} ></Header>
+                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()} domainName={this.state.domainName}></Header>
             )}
             />
             </View>
