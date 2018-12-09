@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>6</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -44,7 +44,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>To scan QR Codes</string>
 	<key>NSCameraUsageDescription</key>
-	<string>To scan QR Codes</string>
+	<string>Camera access requested to scan QR-Codes</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>For secured authentication</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

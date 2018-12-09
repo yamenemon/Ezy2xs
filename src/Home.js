@@ -54,9 +54,9 @@ export default class Home extends Component{
             <View>
             <CardItem style={styles.containerStyle}>
             <Text style={styles.textContainer}>Device needs authorization</Text>
-            <Text style={styles.titleContainer}>• Go to personal menu</Text>
-            <Text style={styles.titleContainer}>• Select the option 'Change Password'</Text>
-            <Text style={styles.titleContainer}>• Scan the qr-code</Text>
+            <Text style={styles.titleContainer}>- Go to personal menu</Text>
+            <Text style={styles.titleContainer}>- Select the option 'App Access'</Text>
+            <Text style={styles.titleContainer}>- Scan the qr-code</Text>
             <View style={styles.gridContainer}>
             <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#release"})}></GridItem>
             <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => this.showActionSheet()}></GridItem>

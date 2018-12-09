@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import Header from './components/Header';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import { Actions } from 'react-native-router-flux';
-import { View } from 'react-native-animatable';
-
+import { View,Platform } from 'react-native';
+import DefaultPreference from 'react-native-default-preference';
+import { ProgressDialog } from 'react-native-simple-dialogs';
+import axios from 'axios';
 class FingerPrintScannerPage extends Component{
 
     constructor(props) {
         super(props);
-        this.state = { errorMessage: undefined };
+        this.state = { errorMessage: undefined,magic:'',progressVisible:false};
       }
 
     dismissHandlePopUp() {
@@ -17,13 +19,53 @@ class FingerPrintScannerPage extends Component{
     }
 
     componentDidMount() {
+        DefaultPreference.get('magic').then((value) => this.setState({magic:value}));
 
-        // FingerprintScanner
-        // .isSensorAvailable()
-        // .then(biometryType => this.setState({ biometryType }))
-        // .catch(error => this.setState({ errorMessage: error.message }));
-    
+     FingerprintScanner
+        .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
+        .then(() => {
+            Actions.gridMenu();
+        })
+        .catch((error) => {
+            this.setState({ errorMessage: error.message });
+            Actions.pinCodePage();
+        });
+    }
 
+    componentWillUnmount(){
+        FingerprintScanner.release();
+    }
+
+    performLogOut(){
+        this.setState({progressVisible:true});
+        const query = this.urlForLogOut();
+        this.executeQuery(query);
+    }
+
+    urlForLogOut() {
+        const data = {
+            MAGIC:this.state.magic
+        };
+        // data[key] = value;
+        const querystring = Object.keys(data)
+          .map(key => key + '=' + encodeURIComponent(data[key]))
+          .join('&');
+        return 'https://dev-pradeep.ez2xs.com/call/api.logoutAll?' + querystring;
+      }
+      executeQuery(urlString){
+        axios.get(urlString)
+        .then(response => this.logOut(response)
+        );
+      }
+
+      logOut(response){
+        console.log('response',response);
+        this.setState({progressVisible:false});
+        DefaultPreference.set('magic','').then(function() {console.log('done')});
+        Actions.auth();
+    }
+
+    performAppExit(){
         FingerprintScanner
         .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
         .then(() => {
@@ -33,13 +75,20 @@ class FingerPrintScannerPage extends Component{
             this.setState({ errorMessage: error.message });
             Actions.pinCodePage();
         });
-
     }
+
+
     render() {
         const { errorMessage } = this.state;
 
         return(
-            <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} ></Header>
+            <View style={{flex:1,flexDirection: "column",backgroundColor: '#fff'}}>
+                <ProgressDialog 
+                    visible={this.state.progressVisible} 
+                    message="Please, wait..."
+                />  
+                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()}></Header>
+            </View>
             // Platform.select({
             //     ios:<Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} ></Header>,
             //     android: 
@@ -67,49 +116,12 @@ FingerPrintScannerPage.propTypes = {
     handlePopupDismissed: PropTypes.func.isRequired,
 };
 
-
-//   styles= StyleSheet.create({
-//     viewContainer: {
-//         position: 'absolute',
-//         top: 0,
-//         bottom: 0,
-//         left: 0,
-//         right: 0,
-//         backgroundColor: 'rgba(0, 164, 222, 0.9)',
-//         flexDirection: 'column',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//       },
-//       contentViewContainer: {
-//         flexDirection: 'column',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         backgroundColor: '#ffffff',
-//       },
-//       logo: {
-//         marginVertical: 45,
-//       },
-//       heading: {
-//         textAlign: 'center',
-//         color: '#00a4de',
-//         fontSize: 21,
-//       },
-//       description: (error) => ({
-//         textAlign: 'center',
-//         color: error ? '#ea3d13' : '#a5a5a5',
-//         height: 65,
-//         fontSize: 18,
-//         marginVertical: 10,
-//         marginHorizontal: 20,
-//       }),
-//       buttonContainer: {
-//         padding: 20,
-//       },
-//       buttonText: {
-//         color: '#8fbc5a',
-//         fontSize: 15,
-//         fontWeight: 'bold',
-//       },
-//   })
+// styles= {
+//     container: {
+//         flex: 1,
+//         flexDirection: "column",
+//       backgroundColor: '#fff',
+//     }
+//   }
 
 export default FingerPrintScannerPage;
