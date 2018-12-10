@@ -6,7 +6,13 @@ import DefaultPreference from 'react-native-default-preference';
 
 export default class PinCodePage extends Component{
 
+    static navigationOptions = ({ navigation }) => ({
+        title: `${navigation.state.params.title}`,
+         headerTitleStyle : {textAlign: 'center',alignSelf:'center'},
+         headerTintColor:"#000000",
 
+         headerStyle: {tintColor:"#000000",backgroundColor:"#f4a30b"}
+        });
     state={pinCodeType:"choose",
             hasUserSetPin:'false run-android'};
             

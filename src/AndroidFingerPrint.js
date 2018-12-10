@@ -30,14 +30,13 @@ class AndroidFingerPrint extends Component {
     FingerprintScanner
       .authenticate({ onAttempt: this.handleAuthenticationAttempted })
       .then(() => {
-        Actions.main();
+        Actions.gridMenu();
 
       })
       .catch((error) => {
         this.setState({ errorMessage: error.message });
         this.description.shake();
         Actions.pinCodePage();
-
       });
   }
 
