@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,StyleSheet,ScrollView,Platform,KeyboardAvoidingView} from 'react-native';
+import {BackHandler,StyleSheet,ScrollView,Platform,KeyboardAvoidingView} from 'react-native';
 import FloatingLabel from 'react-native-floating-labels';
 import Header from './components/Header';
 import Button from './components/Button';
@@ -20,6 +20,20 @@ class LoginPage extends Component{
         passwordString: "",
         progressVisible:false,
     };
+
+    componentWillMount(){
+
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+      }
+    
+      componentWillUnmount(){
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+      }
+      handleBackButton = () => {
+        Actions.pop();
+         return true;
+       } 
+
     onBlur() {
         console.log('#####: onBlur');
       }
@@ -76,9 +90,9 @@ class LoginPage extends Component{
 
     performLoginAPI(urlString){
         axios.get(urlString)
-        .then(response => this.proceedToFingerPrint(response)).catch((error) => {
-            this.showErrorMessage('Authorization Failed');
-        });
+        .then(response => this.proceedToFingerPrint(response)).catch(() => {
+                this.showErrorMessage('Authorization Failed');
+            });
       }
 
     proceedToFingerPrint(response){
@@ -93,11 +107,12 @@ class LoginPage extends Component{
     }
 
     showErrorMessage(message){
-        this.setState({progressVisible:false});
         Snackbar.show({
           title: message,
           duration: Snackbar.LENGTH_LONG,
         });
+        this.setState({progressVisible:false});
+
       }
 
     render(){

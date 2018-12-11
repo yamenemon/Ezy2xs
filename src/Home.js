@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid} from 'react-native';
+import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid,Alert} from 'react-native';
 import Button from './components/Button';
 import Header from './components/Header';
 import CardItem from './components/CardItem';
@@ -26,14 +26,27 @@ export default class Home extends Component{
   }
 
   componentWillUnmount(){
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
 
   }
 
   handleBackButton = () => {
-    BackAndroid.exitApp();
-    return true;
-}
+    Alert.alert(
+        'Exit App',
+        'Exiting the application?', [{
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel'
+        }, {
+            text: 'OK',
+            onPress: () => BackHandler.exitApp()
+        }, ],{
+            cancelable: false
+        }
+     )
+     return true;
+   } 
+   
 
 
   showActionSheet = () => {

@@ -123,6 +123,7 @@ class GridMenu extends Component {
           duration: Snackbar.LENGTH_LONG,
         });
         DefaultPreference.set('magic','').then(function() {console.log('done')});
+        Actions.pop();
         Actions.auth();
         
       }
@@ -142,6 +143,7 @@ class GridMenu extends Component {
         console.log('response',response);
         this.setState({progressVisible:false});
         DefaultPreference.set('magic','').then(function() {console.log('done')});
+        Actions.pop();
         Actions.auth();
     }
 

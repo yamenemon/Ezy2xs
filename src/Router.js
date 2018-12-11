@@ -23,7 +23,7 @@ const RouterComponent = (props) =>{
                 <Scene key="auth" initial={props.isAuthInitial} navigationBarStyle={{ backgroundColor: '#f4a30b' }}>
                 <Scene key="login"  component={Home} hideNavBar title="Home"></Scene>
                 <Scene key="loginPage"  component={LoginPage} title="Login" titleStyle={{fontSize:20,flex: 1,flexWrap: "wrap"}}></Scene>
-                <Scene key="webPage" component={WebPage} title='Release'/>
+                <Scene key="webPage" titleStyle={{fontSize:20,flex: 1,flexWrap: "wrap"}}  component={WebPage} title='Release'/>
                 </Scene>
                 <Scene Modal key='scan' hideNavBar>
                 <Scene Modal key="scannerPage" component={Scanner} title='Scan QR Code' hideNavBar/>
@@ -43,9 +43,9 @@ const RouterComponent = (props) =>{
                 key="portalPage" 
                 component={PortalPage} 
                 title='WebView'
-                titleStyle={{fontSize:18,flex: 1,flexWrap: "wrap"}}
+                titleStyle={{ fontSize:18,flex: 1,flexWrap: "wrap"}}
                 renderBackButton={() => 
-                    <TouchableHighlight underlayColor='transparent' onPress={()=>Actions.pop()}>
+                    <TouchableHighlight style={{marginLeft:10}} underlayColor='transparent' onPress={()=>Actions.pop()}>
                     <Icon
                         size={40}
                         name="home"

@@ -19,7 +19,7 @@ import {
     Dimensions,
     Text,
     TouchableHighlight,
-    Button,
+    BackHandler,
     Linking,
     View  } from 'react-native';
 
@@ -63,11 +63,18 @@ export default class Scanner extends Component{
     return 'https://dev-pradeep.ez2xs.com/call/api.appLogin?' + querystring;
   }
 
-  componentWillUnmount(){
-      // this.setState({willReactivate: false});
-
-
+  componentWillMount(){
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
+
+  componentWillUnmount(){
+      BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton = () => {
+    Actions.pop();
+     return true;
+   }   
   makeSlideOutTranslation(translationType, fromValue) {
     return {
       from: {

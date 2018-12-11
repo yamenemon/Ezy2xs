@@ -1,11 +1,23 @@
 import React, {Component} from 'react';
-import { WebView } from 'react-native';
+import { WebView,BackHandler } from 'react-native';
+import { Actions } from 'react-native-router-flux';
 
 export default class WebPage extends Component{
-    static navigationOptions = ({ navigation }) => ({
-        headerTintColor:"#000000",
-        headerStyle: {tintColor:"#000000",backgroundColor:"#f4a30b"}
-       });
+
+    componentWillMount(){
+
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+      }
+    
+      componentWillUnmount(){
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+      }
+
+      handleBackButton = () => {
+        Actions.pop();
+         return true;
+       } 
+       
     render(){
         return(
             <WebView source={{uri:this.props.webUrl}}></WebView>

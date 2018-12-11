@@ -21,7 +21,7 @@ export default {
     },
     heading: {
       textAlign: 'center',
-      color: '#00a4de',
+      color: '#000',
       fontSize: 21,
     },
     description: (error) => ({
