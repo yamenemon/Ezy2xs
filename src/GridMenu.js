@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, BackAndroid, View} from 'react-native';
+import {Platform, StyleSheet, BackAndroid, View,Dimensions} from 'react-native';
 import { SuperGridSectionList, GridView  } from 'react-native-super-grid';
 import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
 import axios from 'axios';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import Snackbar from 'react-native-snackbar';
+import RNExitApp from 'react-native-exit-app';
 
 import { 
     parseIconFromClassName 
@@ -14,12 +15,17 @@ import {
 
 import GridItem from './components/GridItem';
 import Header from './components/Header';
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const ratio = SCREEN_HEIGHT/SCREEN_WIDTH;
 class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
              portalItems: [{ naam: 'release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
-             domainName: ""
+             domainName: "",
+             isHelpPressed: false
             };
     
     componentWillMount() {
@@ -125,7 +131,6 @@ class GridMenu extends Component {
         DefaultPreference.set('magic','').then(function() {console.log('done')});
         Actions.pop();
         Actions.auth();
-        
       }
     
 
@@ -144,19 +149,22 @@ class GridMenu extends Component {
         this.setState({progressVisible:false});
         DefaultPreference.set('magic','').then(function() {console.log('done')});
         Actions.pop();
-        Actions.auth();
+        this.state.isHelpPressed?Actions.auth():RNExitApp.exitApp(); 
     }
 
     performActionForGridItem(item){
         if(item.item.naam=="Qrcodescan"){
             Actions.scan();
+        }else if(item.item.naam=="Help"){
+            this.setState({isHelpPressed:true});
+            this.performLogOut();
         }else{
             Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/?MAGIC=" +this.state.magic+"#"+ item.item.link,title:item.item.naam})
         }
     }
 
     performAppExit(){
-        Platform.OS  === 'android' ?BackAndroid.exitApp(): Actions.main();
+        Platform.OS  === 'android' ?BackAndroid.exitApp(): RNExitApp.exitApp();
     }
     
     render(){
@@ -180,7 +188,8 @@ class GridMenu extends Component {
                     message="Please, wait..."
                 />  
           <SuperGridSectionList
-            itemDimension={100}
+
+            itemDimension={Platform.isPad||ratio<=1.6?200:100}
             sections={[
                 {
                 title: 'Title1',

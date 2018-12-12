@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid,Alert} from 'react-native';
+import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid,Alert,Dimensions} from 'react-native';
 import Button from './components/Button';
 import Header from './components/Header';
 import CardItem from './components/CardItem';
@@ -10,7 +10,9 @@ import {Icons,parseIconName} from 'react-native-fontawesome';
 import ActionSheet from 'react-native-actionsheet'
 import DefaultPreference from 'react-native-default-preference';
 
-
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const ratio = SCREEN_HEIGHT/SCREEN_WIDTH;
 export default class Home extends Component{
  state = {
     domainName: ""
@@ -31,6 +33,7 @@ export default class Home extends Component{
   }
 
   handleBackButton = () => {
+    console.log("handleBackButton");
     Alert.alert(
         'Exit App',
         'Exiting the application?', [{
@@ -101,11 +104,13 @@ const styles = StyleSheet.create({
     },
     textContainer: {
       padding:40,
+      fontSize: Platform.isPad||ratio<=1.6?30:14
+
     },
     titleContainer: {
-      marginLeft: 60,
+      marginLeft: Platform.isPad||ratio<=1.6?260:60,
       alignSelf: "stretch",
-
+      fontSize: Platform.isPad||ratio<=1.6?30:14
 
     },
     containerStyle: {

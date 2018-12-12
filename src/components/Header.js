@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import { View,Text, TouchableOpacity, Image } from 'react-native';
+import { View,Text, TouchableOpacity, Image, Platform,Dimensions } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const ratio = SCREEN_HEIGHT/SCREEN_WIDTH;
 const Header =  (props) =>{
     return(
         <View style={styles.container}> 
@@ -28,7 +30,7 @@ const styles = {
       justifyContent: 'space-between',
       alignItems: 'flex-start',
       backgroundColor: '#f4a30b',
-      flex: 0.4,
+      flex: Platform.isPad||ratio<=1.6?0.5:0.4,
     },
     logOut: {
         padding:30
@@ -39,11 +41,12 @@ const styles = {
       },
     textContainer: {
         marginTop: 25,
-        alignSelf:'center'
+        alignSelf:'center',
+        fontSize: Platform.isPad||ratio<=1.6?20:14
     },
     logo: {
-      width: 100,
-      height: 100,
+      width: Platform.isPad||ratio<=1.6?200:100,
+      height: Platform.isPad||ratio<=1.6?200:100,
     },
   };
 

@@ -22,8 +22,35 @@ const RouterComponent = (props) =>{
             <Scene key='root' hideNavBar>
                 <Scene key="auth" initial={props.isAuthInitial} navigationBarStyle={{ backgroundColor: '#f4a30b' }}>
                 <Scene key="login"  component={Home} hideNavBar title="Home"></Scene>
-                <Scene key="loginPage"  component={LoginPage} title="Login" titleStyle={{fontSize:20,flex: 1,flexWrap: "wrap"}}></Scene>
-                <Scene key="webPage" titleStyle={{fontSize:20,flex: 1,flexWrap: "wrap"}}  component={WebPage} title='Release'/>
+                <Scene 
+                key="loginPage"  
+                component={LoginPage} 
+                title="Login" 
+                titleStyle={{fontSize:20,flex: 1,flexWrap: "wrap"}}
+                renderBackButton={() => 
+                    <TouchableHighlight style={{marginLeft:10}} underlayColor='transparent' onPress={()=>Actions.pop()}>
+                    <Icon
+                        size={40}
+                        name="home"
+                        type='font-awesome'
+                        color='#000'
+                        />           
+                     </TouchableHighlight>
+           }></Scene>
+                <Scene key="webPage" 
+                titleStyle={{fontSize:20,flex: 1,flexWrap: "wrap"}}  
+                component={WebPage} 
+                title='Release'
+                renderBackButton={() => 
+                    <TouchableHighlight style={{marginLeft:10}} underlayColor='transparent' onPress={()=>Actions.pop()}>
+                    <Icon
+                        size={40}
+                        name="home"
+                        type='font-awesome'
+                        color='#000'
+                        />           
+                     </TouchableHighlight>
+           }/>
                 </Scene>
                 <Scene Modal key='scan' hideNavBar>
                 <Scene Modal key="scannerPage" component={Scanner} title='Scan QR Code' hideNavBar/>

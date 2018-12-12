@@ -59,13 +59,13 @@ class LoginPage extends Component{
             return;
         }
 
-        if(this.validate(this.state.emailString)){
+        // if(this.validate(this.state.emailString)){
             this.performLogin();
-        }else{
-            this.showErrorMessage("Please provide valid mail address");
-            return;
+        // }else{
+        //     this.showErrorMessage("Please provide valid mail address");
+        //     return;
 
-        }
+        // }
     }
 
     validate = (text) => {
@@ -125,12 +125,14 @@ class LoginPage extends Component{
             <ScrollView>
             <Header>
                 </Header>
-                <FloatingLabel labelStyle={styles.labelInput} 
+                <FloatingLabel labelStyle={styles.labelInput}
+                autoCapitalize ={false}
+                 keyboardType = "email-address"
                 inputStyle={styles.input}
                 style={styles.formInput}
                 onBlur={this.onBlur}
                 onChangeText={(value) => this.setState({emailString:value})}
-                >Email
+                >Email/Username
                 </FloatingLabel>
                 <FloatingLabel 
                     labelStyle={styles.labelInput}

@@ -31,11 +31,18 @@ export default class PortalPage extends Component{
         console.log("magic",this.state.magicValue)
         
     }
+
+    getJsonString(){
+        return `document.getElementsByTagName('nav')[0].style.display='none';`;
+    }
+
     render(){
         const jsCode = `document.getElementsByTagName('nav')[0].style.display='none';`;
         return(
+            // <WebView source={{uri:this.props.webUrl}}></WebView>
+
             <View style={styles.container}>
-            <WebView 
+            <WebView style={styles.webViewStyle}
             onLoad={() => this.hideSpinner()}
             source={{uri:this.props.webUrl, headers:{"Authorization":"MAGIC "+this.state.magicValue,"Content-Type":"application/json"}}}
             javaScriptEnabled={true}
@@ -47,7 +54,6 @@ export default class PortalPage extends Component{
                 size="large"
             />
             )}
-
             </View>
         );
     }
@@ -58,6 +64,9 @@ const styles = StyleSheet.create({
         flex: 1,
       backgroundColor: '#fff',
       alignItems: "stretch",
-      justifyContent: "center"
+    },
+
+    webViewStyle:{
+        alignSelf: 'stretch'
     }
 });
