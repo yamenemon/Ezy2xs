@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {BackHandler,StyleSheet,ScrollView,Platform,KeyboardAvoidingView} from 'react-native';
+import {BackHandler,StyleSheet,ScrollView,Platform,KeyboardAvoidingView,NetInfo} from 'react-native';
 import FloatingLabel from 'react-native-floating-labels';
 import Header from './components/Header';
 import Button from './components/Button';
@@ -85,16 +85,16 @@ class LoginPage extends Component{
     performLogin(){
         this.setState({progressVisible:true});
 
-                const query  = this.urlForLogin();
-                this.performLoginAPI(query);
+                // const query  = this.urlForLogin();
+                // this.performLoginAPI(query);
           
-        // if(NetInfo.isConnected)
-        // {
-        //     const query  = this.urlForLogin();
-        //     this.performLoginAPI(query);
-        // }else{
-        //     this.showErrorMessage("No internet connection is available");
-        // }
+        if(NetInfo.isConnected)
+        {
+            const query  = this.urlForLogin();
+            this.performLoginAPI(query);
+        }else{
+            this.showErrorMessage("No internet connection");
+        }
 
         
     }
@@ -137,7 +137,7 @@ class LoginPage extends Component{
             <Header>
                 </Header>
                 <FloatingLabel labelStyle={styles.labelInput}
-                autoCapitalize ={false}
+                autoCapitalize ='none'
                  keyboardType = "email-address"
                 inputStyle={styles.input}
                 style={styles.formInput}

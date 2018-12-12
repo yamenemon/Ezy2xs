@@ -10,7 +10,7 @@ import URLSearchParams from 'url-search-params';
 import DeviceInfo from 'react-native-device-info';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import Snackbar from 'react-native-snackbar';
-
+import {NetInfo} from 'react-native';
 import { 
     Platform,
     WebView,
@@ -87,9 +87,17 @@ export default class Scanner extends Component{
   }
 
   executeQuery(urlString){
-    this.setState({progressVisible:true});
-    axios.get(urlString)
-    .then(response => this.getMagicToken(response));
+    NetInfo.isConnected.fetch().then(isConnected => {
+        if(isConnected){
+          this.setState({progressVisible:true});
+          axios.get(urlString)
+          .then(response => this.getMagicToken(response));
+        }else{
+          this.setState({progressVisible:false});
+          this.showErrorMessage("No internet connection");
+        }
+    });
+
     
   }
 
@@ -107,9 +115,9 @@ export default class Scanner extends Component{
     .then(response => this.proceedToFingerPrint(response));
   }
 
-  showErrorMessage(){
+  showErrorMessage(message){
     Snackbar.show({
-      title: 'No valid qr code found',
+      title: message,
       duration: Snackbar.LENGTH_SHORT,
     });
     Actions.pop();
@@ -135,7 +143,7 @@ export default class Scanner extends Component{
         this.performLoginAPI(loginQuery);
       })
     }else{
-      this.showErrorMessage();
+      this.showErrorMessage("Authorization failed");
     }
   }
     render() {
@@ -180,7 +188,7 @@ export default class Scanner extends Component{
                       }
                     }
                   }else{
-                    this.showErrorMessage();
+                    this.showErrorMessage("Authorization failed");
                   }
                 }
               }

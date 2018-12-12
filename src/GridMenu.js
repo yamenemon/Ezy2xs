@@ -23,7 +23,7 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
+             portalItems: [{ naam: 'release', code: '#676767', link:"Release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
              domainName: "",
              isHelpPressed: false
             };
@@ -48,7 +48,7 @@ class GridMenu extends Component {
             }else{
                 this.setState({progressVisible:false});
                 Snackbar.show({
-                  title: "No internet is available",
+                  title: "No internet connection",
                   duration: Snackbar.LENGTH_LONG,
                 });
             }
@@ -80,9 +80,22 @@ class GridMenu extends Component {
       }
 
     performLogOut(){
+
         this.setState({progressVisible:true});
-        const query = this.urlForLogOut();
-        this.executeQuery(query,false);
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected)
+            {
+                const query = this.urlForLogOut();
+                this.executeQuery(query,false);
+            }else{
+                this.setState({progressVisible:false});
+                Snackbar.show({
+                  title: "No internet connection",
+                  duration: Snackbar.LENGTH_LONG,
+                });
+            }
+          });
+
     }
     
 
