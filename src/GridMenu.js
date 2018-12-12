@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, BackAndroid, View} from 'react-native';
+import {Platform, StyleSheet, BackAndroid, View,Dimensions} from 'react-native';
 import { SuperGridSectionList, GridView  } from 'react-native-super-grid';
 import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
 import axios from 'axios';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import Snackbar from 'react-native-snackbar';
+import RNExitApp from 'react-native-exit-app';
 
 import { 
     parseIconFromClassName 
@@ -14,11 +15,17 @@ import {
 
 import GridItem from './components/GridItem';
 import Header from './components/Header';
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const ratio = SCREEN_HEIGHT/SCREEN_WIDTH;
 class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#676767',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }]
+             portalItems: [{ naam: 'release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
+             domainName: "",
+             isHelpPressed: false
             };
     
     componentWillMount() {
@@ -27,8 +34,7 @@ class GridMenu extends Component {
         console.log("validIcon",cleanText);
         this.setState({progressVisible:true});
         DefaultPreference.get('magic').then((value) => this.fetchPortalItems(value));
-
-
+        DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
     }
 
     fetchPortalItems(value){
@@ -84,6 +90,13 @@ class GridMenu extends Component {
         }
     }
 
+     camelize(str) {
+        return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
+          return index == 0 ? letter.toUpperCase() : letter.toLowerCase();
+        }).replace(/\s+/g, '');
+      }
+      
+
     finishFetchinPortalItems(response){
             console.log('response',response.data.nportal);
             var convertedArray = this.json2array(response.data.nportal);
@@ -97,8 +110,11 @@ class GridMenu extends Component {
                  element.icon = d;
                }else{
                    element.icon = c;
-               }    
+               } 
                this.state.portalItems.push(element);
+            });
+            this.state.portalItems.forEach(item => {
+                item.naam = this.camelize(item.naam);
             });
             // convertedArray = this.state.portalItems.push(convertedArray);
             this.setState({portalItems:this.state.portalItems});
@@ -113,8 +129,8 @@ class GridMenu extends Component {
           duration: Snackbar.LENGTH_LONG,
         });
         DefaultPreference.set('magic','').then(function() {console.log('done')});
+        Actions.pop();
         Actions.auth();
-        
       }
     
 
@@ -132,19 +148,23 @@ class GridMenu extends Component {
         console.log('response',response);
         this.setState({progressVisible:false});
         DefaultPreference.set('magic','').then(function() {console.log('done')});
-        Actions.auth();
+        Actions.pop();
+        this.state.isHelpPressed?Actions.auth():RNExitApp.exitApp(); 
     }
 
     performActionForGridItem(item){
-        if(item.item.naam=="qrcodescan"){
+        if(item.item.naam=="Qrcodescan"){
             Actions.scan();
+        }else if(item.item.naam=="Help"){
+            this.setState({isHelpPressed:true});
+            this.performLogOut();
         }else{
-            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/?MAGIC=" +this.state.magic+"#"+ item.item.link})
+            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/?MAGIC=" +this.state.magic+"#"+ item.item.link,title:item.item.naam})
         }
     }
 
     performAppExit(){
-        Platform.OS  === 'android' ?BackAndroid.exitApp(): Actions.main();
+        Platform.OS  === 'android' ?BackAndroid.exitApp(): RNExitApp.exitApp();
     }
     
     render(){
@@ -168,7 +188,8 @@ class GridMenu extends Component {
                     message="Please, wait..."
                 />  
           <SuperGridSectionList
-            itemDimension={100}
+
+            itemDimension={Platform.isPad||ratio<=1.6?200:100}
             sections={[
                 {
                 title: 'Title1',
@@ -178,14 +199,14 @@ class GridMenu extends Component {
             style={styles.gridView}
             renderItem={({ item }) => (
                 // <GridItem colorCode={item.code} imageName={item.image}  highlightColor={item.highlighColor} webUrlSource="https://www.google.com" onPress={() => Linking.openURL("https://dev-pradeep.ez2xs.com/n/#auditor")}></GridItem>
-                <GridItem colorCode={item.code} imageName={item.icon} highlightColor={item.highlightColor}   onPress={() => this.performActionForGridItem({item})}></GridItem>
+                <GridItem colorCode={item.code}  imageName={item.icon} highlightColor={item.highlightColor}   onPress={() => this.performActionForGridItem({item})}></GridItem>
                 // <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 // <Text style={styles.itemName}>{item.name}</Text>
                 // <Text style={styles.itemCode}>{item.code}</Text>
                 // </View>
             )}
             renderSectionHeader={({ section }) => (
-                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()} ></Header>
+                <Header logoutIconName={require('./components/power_off/power_settings.png')} tvIconName={require('./components/tv/tv.png')} onPressExit={()=>this.performAppExit()} onPress={() => this.performLogOut()} domainName={this.state.domainName}></Header>
             )}
             />
             </View>

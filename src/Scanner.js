@@ -19,7 +19,7 @@ import {
     Dimensions,
     Text,
     TouchableHighlight,
-    Button,
+    BackHandler,
     Linking,
     View  } from 'react-native';
 
@@ -63,11 +63,18 @@ export default class Scanner extends Component{
     return 'https://dev-pradeep.ez2xs.com/call/api.appLogin?' + querystring;
   }
 
-  componentWillUnmount(){
-      // this.setState({willReactivate: false});
-
-
+  componentWillMount(){
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
+
+  componentWillUnmount(){
+      BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton = () => {
+    Actions.pop();
+     return true;
+   }   
   makeSlideOutTranslation(translationType, fromValue) {
     return {
       from: {
@@ -158,14 +165,19 @@ export default class Scanner extends Component{
                   var values = urlParams.values();
                     for(value of values) { 
                       if(value != 'Apple APP')
-                      console.log(value);
-                      sha256(value).then( hash => {
-                        console.log('hash',hash)
-                        this.setState({preAuth:hash})
-                        const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
-                        console.log('query',query);
-                        this.executeQuery(query);
-                      })
+                      {
+                        console.log(value);
+                        sha256(value).then( hash => {
+                          console.log('hash',hash)
+                          this.setState({preAuth:hash})
+                          const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
+                          console.log('query',query);
+                          this.executeQuery(query);
+                        })
+                      }else{
+                        DefaultPreference.set('domainName', value).then(() => {
+                        });
+                      }
                     }
                   }else{
                     this.showErrorMessage();

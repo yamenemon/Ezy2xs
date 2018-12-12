@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid} from 'react-native';
+import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid,Alert,Dimensions} from 'react-native';
 import Button from './components/Button';
 import Header from './components/Header';
 import CardItem from './components/CardItem';
@@ -8,28 +8,48 @@ import { Actions } from 'react-native-router-flux';
 import Snackbar from 'react-native-snackbar';
 import {Icons,parseIconName} from 'react-native-fontawesome';
 import ActionSheet from 'react-native-actionsheet'
+import DefaultPreference from 'react-native-default-preference';
 
-
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const ratio = SCREEN_HEIGHT/SCREEN_WIDTH;
 export default class Home extends Component{
-
+ state = {
+    domainName: ""
+ }
   componentWillMount(){
     Snackbar.show({
       title: 'Device needs authorization',
       duration: Snackbar.LENGTH_LONG,
     });
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
 
   }
 
   componentWillUnmount(){
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
 
   }
 
   handleBackButton = () => {
-    BackAndroid.exitApp();
-    return true;
-}
+    console.log("handleBackButton");
+    Alert.alert(
+        'Exit App',
+        'Exiting the application?', [{
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel'
+        }, {
+            text: 'OK',
+            onPress: () => BackHandler.exitApp()
+        }, ],{
+            cancelable: false
+        }
+     )
+     return true;
+   } 
+   
 
 
   showActionSheet = () => {
@@ -49,14 +69,14 @@ export default class Home extends Component{
         return(
             <View style={styles.container}>
             <ScrollView>
-            <Header>
+            <Header domainName={this.state.domainName}>
             </Header>
             <View>
             <CardItem style={styles.containerStyle}>
             <Text style={styles.textContainer}>Device needs authorization</Text>
-            <Text style={styles.titleContainer}>• Go to personal menu</Text>
-            <Text style={styles.titleContainer}>• Select the option 'Change Password'</Text>
-            <Text style={styles.titleContainer}>• Scan the qr-code</Text>
+            <Text style={styles.titleContainer}>- Go to personal menu</Text>
+            <Text style={styles.titleContainer}>- Select the option 'App Access'</Text>
+            <Text style={styles.titleContainer}>- Scan the qr-code</Text>
             <View style={styles.gridContainer}>
             <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#release"})}></GridItem>
             <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => this.showActionSheet()}></GridItem>
@@ -84,11 +104,13 @@ const styles = StyleSheet.create({
     },
     textContainer: {
       padding:40,
+      fontSize: Platform.isPad||ratio<=1.6?30:14
+
     },
     titleContainer: {
-      marginLeft: 60,
+      marginLeft: Platform.isPad||ratio<=1.6?260:60,
       alignSelf: "stretch",
-
+      fontSize: Platform.isPad||ratio<=1.6?30:14
 
     },
     containerStyle: {
