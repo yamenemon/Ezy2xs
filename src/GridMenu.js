@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, BackAndroid, View,Dimensions} from 'react-native';
+import {Platform, StyleSheet, BackAndroid, View,Dimensions,NetInfo} from 'react-native';
 import { SuperGridSectionList, GridView  } from 'react-native-super-grid';
 import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
@@ -38,10 +38,23 @@ class GridMenu extends Component {
     }
 
     fetchPortalItems(value){
-        this.setState({magic:value});
-        const query = this.urlToFetchPortalItems();
-        console.log("urlToFetchPortalItems",query);
-        this.executeQuery(query,true);
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected)
+            {
+                this.setState({magic:value});
+                const query = this.urlToFetchPortalItems();
+                console.log("urlToFetchPortalItems",query);
+                this.executeQuery(query,true);
+            }else{
+                this.setState({progressVisible:false});
+                Snackbar.show({
+                  title: "No internet is available",
+                  duration: Snackbar.LENGTH_LONG,
+                });
+            }
+          });
+          
+
     }
 
     urlForLogOut() {

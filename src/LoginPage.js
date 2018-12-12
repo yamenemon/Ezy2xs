@@ -22,10 +22,11 @@ class LoginPage extends Component{
     };
 
     componentWillMount(){
-
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
       }
-    
+      
+
+
       componentWillUnmount(){
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
       }
@@ -83,8 +84,18 @@ class LoginPage extends Component{
 
     performLogin(){
         this.setState({progressVisible:true});
-        const query  = this.urlForLogin();
-        this.performLoginAPI(query);
+
+                const query  = this.urlForLogin();
+                this.performLoginAPI(query);
+          
+        // if(NetInfo.isConnected)
+        // {
+        //     const query  = this.urlForLogin();
+        //     this.performLoginAPI(query);
+        // }else{
+        //     this.showErrorMessage("No internet connection is available");
+        // }
+
         
     }
 
