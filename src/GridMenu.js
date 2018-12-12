@@ -23,7 +23,7 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'release', code: '#676767', link:"Release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
+             portalItems: [{ naam: 'Release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
              domainName: "",
              isHelpPressed: false
             };
@@ -46,11 +46,11 @@ class GridMenu extends Component {
                 console.log("urlToFetchPortalItems",query);
                 this.executeQuery(query,true);
             }else{
-                this.setState({progressVisible:false});
                 Snackbar.show({
                   title: "No internet connection",
                   duration: Snackbar.LENGTH_LONG,
                 });
+                this.setState({progressVisible:false});
             }
           });
           
