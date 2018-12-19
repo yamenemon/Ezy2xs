@@ -72,7 +72,7 @@ export default class Scanner extends Component{
 
   componentWillMount(){
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    Orientation.addOrientationListener(this._orientationDidChange)
+    Orientation.addOrientationListener(this._orientationDidChange.bind(this))
     if(SCREEN_WIDTH>SCREEN_HEIGHT)
     {
       this.setState({isLandscape:true});
@@ -84,6 +84,13 @@ export default class Scanner extends Component{
   }
 
   _orientationDidChange(orientation) {
+    console.log("width: height :",Dimensions.get("screen").width,Dimensions.get("screen").height)
+    if(orientation=="LANDSCAPE")
+    {
+      this.setState({isLandscape:true});
+    }else{
+      this.setState({isLandscape:false})
+    }
   }
 
   handleBackButton = () => {
@@ -144,6 +151,8 @@ export default class Scanner extends Component{
 
     if(response.status === 200 && response.data.result!="error")
     {
+      DefaultPreference.set('code', response.data.code).then(() => {
+      });
       this.setState({ authToken: response.data.auth });
       var randomString = require('random-string');
       var salt = randomString({length: 6});
@@ -169,7 +178,7 @@ export default class Scanner extends Component{
 
     render() {
         return(
-          <View style={styles.container} onLayout = {this.onLayout.bind(this)}>
+          <View style={styles.container} >
           <ProgressDialog 
           visible={this.state.progressVisible} 
           message="Please, wait..."
@@ -181,7 +190,7 @@ export default class Scanner extends Component{
                               Cancel
                             </Text>
                             </TouchableHighlight>}
-            cameraStyle={{ height: Dimensions.get('window').height, marginTop:0 }}
+            cameraStyle={this.state.isLandscape?{ width: 1024,height:768, marginTop:0 }:{ height: Dimensions.get('window').height, marginTop:0 }}
             onRead={(e) =>{
               console.log('QR code scanned!', e);
               const uniqueId = DeviceInfo.getUniqueID();
@@ -223,20 +232,20 @@ export default class Scanner extends Component{
               }
             customMarker={
               <View style={styles.rectangleContainer}>
-                <View style={styles.topOverlay}>
+                <View style={this.state.isLandscape?styles.topOverlayLandscape:styles.topOverlay}>
                 </View>
     
                 <View style={{ flexDirection: "row" }}>
-                  <View style={styles.leftAndRightOverlay} />
+                  <View style={this.state.isLandscape?styles.leftAndRightOverlayLandscape:styles.leftAndRightOverlay} />
     
-                  <View style={styles.rectangle}>
+                  <View style={this.state.isLandscape?styles.rectangleLandscape:styles.rectangle}>
                     <Icon
                       name="ios-qr-scanner"
                       size={this.state.isLandscape?SCREEN_HEIGHT*0.73:SCREEN_WIDTH * 0.73}
                       color={iconScanColor}
                     />
                     <Animatable.View
-                      style={styles.scanBar}
+                      style={this.state.isLandscape?styles.scanBarLandscape:styles.scanBar}
                       direction="alternate-reverse"
                       iterationCount="infinite"
                       duration={1700}
@@ -248,10 +257,10 @@ export default class Scanner extends Component{
                     />
                   </View>
     
-                  <View style={styles.leftAndRightOverlay} />
+                  <View style={this.state.isLandscape?styles.leftAndRightOverlayLandscape:styles.leftAndRightOverlay} />
                 </View>
     
-                <View style={styles.bottomOverlay} />
+                <View style={this.state.isLandscape?styles.bottomOverlayLandscape:styles.bottomOverlay} />
               </View>
             }
             />  
@@ -263,13 +272,19 @@ export default class Scanner extends Component{
 
 const overlayColor = "rgba(0,0,0,0.5)"; // this gives us a black color with a 50% transparency
 
-// const rectDimensions =this.state.isLandscape?SCREEN_HEIGHT * 0.65:SCREEN_WIDTH * 0.65;
-//  // this is equivalent to 255 from a 393 device width
-// const rectBorderWidth = this.state.isLandscape?SCREEN_HEIGHT * 0.005:SCREEN_WIDTH * 0.005; // this is equivalent to 2 from a 393 device width
-// const rectBorderColor = "red";
+const rectDimensions =SCREEN_WIDTH * 0.65;
+const rectDimensionsLandscape =SCREEN_HEIGHT * 0.65;
+// this is equivalent to 255 from a 393 device width
+const rectBorderWidth = SCREEN_WIDTH * 0.005;
+const rectBorderWidthLandscape = SCREEN_HEIGHT * 0.005; // this is equivalent to 2 from a 393 device width
+ // this is equivalent to 2 from a 393 device width
+const rectBorderColor = "red";
 
-// const scanBarWidth = this.state.isLandscape?SCREEN_HEIGHT*0.46:SCREEN_WIDTH * 0.46; // this is equivalent to 180 from a 393 device width
-// const scanBarHeight = this.state.isLandscape?SCREEN_HEIGHT * 0.0025:SCREEN_WIDTH * 0.0025; //this is equivalent to 1 from a 393 device width
+const scanBarWidth = SCREEN_WIDTH * 0.46; // this is equivalent to 180 from a 393 device width
+const scanBarWidthLandscape = SCREEN_HEIGHT*0.46; // this is equivalent to 180 from a 393 device width
+const scanBarHeight = SCREEN_WIDTH * 0.0025; //this is equivalent to 1 from a 393 device width
+const scanBarHeightLandscape = SCREEN_HEIGHT * 0.0025; //this is equivalent to 1 from a 393 device width
+
 const scanBarColor = "#22ff00";
 
 const iconScanColor = "blue";
@@ -298,18 +313,34 @@ const styles = {
   },
 
   rectangle: {
-    height: this.state.isLandscape?SCREEN_HEIGHT * 0.65:SCREEN_WIDTH * 0.65,
-    width: this.state.isLandscape?SCREEN_HEIGHT * 0.65:SCREEN_WIDTH * 0.65,
-    borderWidth: this.state.isLandscape?SCREEN_HEIGHT * 0.005:SCREEN_WIDTH * 0.005,
+    height: rectDimensions,
+    width: rectDimensions,
+    borderWidth: rectBorderWidth,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "transparent"
   },
 
+  rectangleLandscape: {
+    height: rectDimensionsLandscape,
+    width: rectDimensionsLandscape,
+    borderWidth: rectBorderWidthLandscape,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  },
   topOverlay: {
     flex: 1,
-    height:this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
-    width: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
+    height:SCREEN_WIDTH,
+    width: SCREEN_WIDTH,
+    backgroundColor: overlayColor,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  topOverlayLandscape: {
+    flex: 1,
+    height:SCREEN_HEIGHT,
+    width: SCREEN_HEIGHT,
     backgroundColor: overlayColor,
     justifyContent: "center",
     alignItems: "center"
@@ -317,21 +348,40 @@ const styles = {
 
   bottomOverlay: {
     flex: 1,
-    height: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
-    width: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
+    height: SCREEN_WIDTH,
+    width: SCREEN_WIDTH,
     backgroundColor: overlayColor,
-    paddingBottom: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH * 0.00
+    paddingBottom: SCREEN_WIDTH * 0.00
+  },
+
+  bottomOverlayLandscape: {
+    flex: 1,
+    height: SCREEN_HEIGHT,
+    width: SCREEN_HEIGHT,
+    backgroundColor: overlayColor,
+    paddingBottom: SCREEN_HEIGHT*0.00
   },
 
   leftAndRightOverlay: {
-    height: this.state.isLandscape?SCREEN_HEIGHT*0.65:SCREEN_WIDTH*0.65,
-    width: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
+    height: SCREEN_WIDTH*0.65,
+    width: SCREEN_WIDTH,
+    backgroundColor: overlayColor
+  },
+
+  leftAndRightOverlayLandscape: {
+    height: SCREEN_HEIGHT*0.65,
+    width: SCREEN_HEIGHT,
     backgroundColor: overlayColor
   },
 
   scanBar: {
-    width: this.state.isLandscape?SCREEN_HEIGHT*0.46:SCREEN_WIDTH * 0.46,
-    height: this.state.isLandscape?SCREEN_HEIGHT * 0.0025:SCREEN_WIDTH * 0.0025,
+    width: scanBarWidth,
+    height: scanBarHeight,
+    backgroundColor: scanBarColor
+  },
+  scanBarLandscape: {
+    width: scanBarWidthLandscape,
+    height: scanBarHeightLandscape,
     backgroundColor: scanBarColor
   }
 };

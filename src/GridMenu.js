@@ -7,6 +7,7 @@ import axios from 'axios';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import Snackbar from 'react-native-snackbar';
 import RNExitApp from 'react-native-exit-app';
+import { sha256 } from 'react-native-sha256';
 
 import { 
     parseIconFromClassName 
@@ -27,7 +28,9 @@ class GridMenu extends Component {
              domainName: "",
              isHelpPressed: false,
              baseUrl:"",
-             portalUrl:""
+             portalUrl:"",
+             salt:"",
+             code:""
             };
     
     componentWillMount() {
@@ -40,6 +43,8 @@ class GridMenu extends Component {
         DefaultPreference.get('magic').then((value) => this.fetchPortalItems(value));
         DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
         DefaultPreference.get('portalUrl').then((value) => this.setState({portalUrl:value})
+        );
+        DefaultPreference.get('code').then((value) => this.setState({code:value})
         );
     }
 
@@ -74,6 +79,18 @@ class GridMenu extends Component {
           return this.state.baseUrl + "api.logoutAll?" + querystring;
       }
 
+      urlForAppLogOut() {
+        const data = {
+            salt:this.state.salt,
+            code:this.state.code
+        };
+        // data[key] = value;
+        const querystring = Object.keys(data)
+          .map(key => key + '=' + encodeURIComponent(data[key]))
+          .join('&');
+          return this.state.baseUrl + "api.public.delAuthApp?" + querystring;
+      }
+
       urlToFetchPortalItems() {
         const data = {
             MAGIC:this.state.magic
@@ -84,6 +101,34 @@ class GridMenu extends Component {
           .join('&');
           return this.state.baseUrl + "api.getMedewerkerInfo?" + querystring;
       }
+
+    performAppLogout(){
+        this.setState({progressVisible:true});
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected)
+            {
+                var randomString = require('random-string');
+                var salt = randomString({length: 6});
+                console.log('randomString',salt);
+                this.setState({salt:salt});
+                const authAppendedString = salt + this.state.code;
+                console.log('authAppendedString',authAppendedString);
+                sha256(authAppendedString).then( hash => {
+                    console.log('hash',hash);
+                    this.setState({code:hash});
+                    const query = this.urlForAppLogOut();
+                    this.executeQueryForAppLogout(query,false);
+                  })
+
+            }else{
+                this.setState({progressVisible:false});
+                Snackbar.show({
+                  title: "No internet connection",
+                  duration: Snackbar.LENGTH_LONG,
+                });
+            }
+          });
+    }
 
     performLogOut(){
 
@@ -106,20 +151,28 @@ class GridMenu extends Component {
     
 
     executeQuery(urlString,isFetchPortal){
-        console.log('isFetchPortal',isFetchPortal);
+        console.log('isFetchPortal',isFetchPortal,urlString);
 
         if(isFetchPortal)
         {
             axios.get(urlString)
             .then(response => this.finishFetchinPortalItems(response)
-            ).catch(
-                (error) => this.showErrorMessage("Authorization Failed")
             );
         }else{
             axios.get(urlString)
             .then(response => this.logOut(response)
             );
         }
+    }
+
+    executeQueryForAppLogout(urlString){
+        console.log('executeQueryForAppLogout',urlString);
+            axios.get(urlString)
+            .then(response => this.appLogOut(response)
+            ).catch(
+                (error) => this.showErrorMessage("Authorization Failed")
+            );
+
     }
 
      camelize(str) {
@@ -129,8 +182,9 @@ class GridMenu extends Component {
       }
       
 
-    finishFetchinPortalItems(response){
-            console.log('response',response.data.nportal);
+      finishFetchinPortalItems(response){
+        this.setState({progressVisible:false});
+        console.log('response',response.data.nportal);
             var convertedArray = this.json2array(response.data.nportal);
             convertedArray.forEach(element => {
                 element.code = "#414141";
@@ -147,12 +201,10 @@ class GridMenu extends Component {
             });
             this.state.portalItems.forEach(item => {
                 item.naam = this.camelize(item.naam);
-
             });
-            // convertedArray = this.state.portalItems.push(convertedArray);
+            convertedArray = this.state.portalItems.push(convertedArray);
             this.setState({portalItems:this.state.portalItems});
             console.log('portalItems',this.state.portalItems);
-            this.setState({progressVisible:false});
     }
 
     showErrorMessage(message){
@@ -177,6 +229,14 @@ class GridMenu extends Component {
     }
     
 
+    appLogOut(response){
+        console.log('response',response);
+        this.setState({progressVisible:false});
+        Actions.pop();
+        Actions.main();
+    }
+
+
     logOut(response){
         console.log('response',response);
         this.setState({progressVisible:false});
@@ -190,7 +250,7 @@ class GridMenu extends Component {
             Actions.scan();
         }else if(item.item.naam=="Help"){
             this.setState({isHelpPressed:true});
-            this.performLogOut();
+            this.performAppLogout();
         }else if(item.item.naam=="Release" && item.item.code=="#676767"){
             Actions.portalPage({webUrl:"https://ez2xs.ez2xs.com/portal/release",title:item.item.naam})
 
