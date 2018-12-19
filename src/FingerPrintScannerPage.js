@@ -11,7 +11,7 @@ class FingerPrintScannerPage extends Component{
 
     constructor(props) {
         super(props);
-        this.state = { errorMessage: undefined,magic:'',progressVisible:false,domainName:''};
+        this.state = { errorMessage: undefined,magic:'',progressVisible:false,domainName:'',baseUrl:""};
       }
 
     dismissHandlePopUp() {
@@ -21,7 +21,7 @@ class FingerPrintScannerPage extends Component{
     componentDidMount() {
         DefaultPreference.get('magic').then((value) => this.setState({magic:value}));
         DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
-
+        DefaultPreference.get('baseUrl').then((value) => this.setState({baseUrl:value}));
      FingerprintScanner
         .authenticate({ description: 'Scan your fingerprint on the device scanner to continue' })
         .then(() => {
@@ -51,7 +51,7 @@ class FingerPrintScannerPage extends Component{
         const querystring = Object.keys(data)
           .map(key => key + '=' + encodeURIComponent(data[key]))
           .join('&');
-        return 'https://dev-pradeep.ez2xs.com/call/api.logoutAll?' + querystring;
+        return  this.state.baseUrl+"api.logoutAll?" + querystring;
       }
       executeQuery(urlString){
         axios.get(urlString)
