@@ -19,10 +19,13 @@ class LoginPage extends Component{
         emailString: "",
         passwordString: "",
         progressVisible:false,
+        baseUrl:"https://dev-pradeep.ez2xs.com/call/"
     };
 
     componentWillMount(){
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+        DefaultPreference.get('baseUrl').then((value) => this.setState({baseUrl:value})
+        );
       }
       
 
@@ -49,7 +52,7 @@ class LoginPage extends Component{
         const querystring = Object.keys(data)
           .map(key => key + '=' + encodeURIComponent(data[key]))
           .join('&');
-        return 'https://dev-pradeep.ez2xs.com/call/api.login?' + querystring;
+        return  this.state.baseUrl+'api.login?' + querystring;
       }
     
 

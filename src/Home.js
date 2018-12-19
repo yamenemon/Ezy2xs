@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,BackAndroid,Alert,Dimensions} from 'react-native';
+import {Platform, StyleSheet, ScrollView, View, Text,BackHandler,Alert,Dimensions} from 'react-native';
 import Button from './components/Button';
 import Header from './components/Header';
 import CardItem from './components/CardItem';
@@ -9,13 +9,15 @@ import Snackbar from 'react-native-snackbar';
 import {Icons,parseIconName} from 'react-native-fontawesome';
 import ActionSheet from 'react-native-actionsheet'
 import DefaultPreference from 'react-native-default-preference';
+import Orientation from 'react-native-orientation';
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const ratio = SCREEN_HEIGHT/SCREEN_WIDTH;
 export default class Home extends Component{
  state = {
-    domainName: ""
+    domainName: "",
+    orientationMode:""
  }
   componentWillMount(){
     Snackbar.show({
@@ -23,14 +25,20 @@ export default class Home extends Component{
       duration: Snackbar.LENGTH_LONG,
     });
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    Orientation.addOrientationListener(this._orientationDidChange)
     DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
 
   }
 
   componentWillUnmount(){
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
-
+    Orientation.removeOrientationListener(this._orientationDidChange)
   }
+
+  _orientationDidChange(orientation) {
+    console.log(orientation)
+  }
+
 
   handleBackButton = () => {
     console.log("handleBackButton");
@@ -69,7 +77,7 @@ export default class Home extends Component{
         return(
             <View style={styles.container}>
             <ScrollView>
-            <Header domainName={this.state.domainName}>
+            <Header domainName={this.state.domainName} isHome={true}>
             </Header>
             <View>
             <CardItem style={styles.containerStyle}>
@@ -78,7 +86,7 @@ export default class Home extends Component{
             <Text style={styles.titleContainer}>- Select the option 'App Access'</Text>
             <Text style={styles.titleContainer}>- Scan the qr-code</Text>
             <View style={styles.gridContainer}>
-            <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://dev-pradeep.ez2xs.com/n/#release"})}></GridItem>
+            <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://ez2xs.ez2xs.com/portal/release"})}></GridItem>
             <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => this.showActionSheet()}></GridItem>
             </View>
             </CardItem>
@@ -105,13 +113,11 @@ const styles = StyleSheet.create({
     textContainer: {
       padding:40,
       fontSize: Platform.isPad||ratio<=1.6?30:14
-
     },
     titleContainer: {
       marginLeft: Platform.isPad||ratio<=1.6?260:60,
       alignSelf: "stretch",
       fontSize: Platform.isPad||ratio<=1.6?30:14
-
     },
     containerStyle: {
       alignItems: 'stretch',

@@ -23,9 +23,11 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'Release', code: '#676767', link:"release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
+             portalItems: [{ naam: 'Release', code: '#676767', link:"https://ez2xs.ez2xs.com/portal/release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
              domainName: "",
-             isHelpPressed: false
+             isHelpPressed: false,
+             baseUrl:"",
+             portalUrl:""
             };
     
     componentWillMount() {
@@ -33,8 +35,12 @@ class GridMenu extends Component {
         const cleanText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
         console.log("validIcon",cleanText);
         this.setState({progressVisible:true});
+        DefaultPreference.get('baseUrl').then((value) => this.setState({baseUrl:value})
+        );
         DefaultPreference.get('magic').then((value) => this.fetchPortalItems(value));
         DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
+        DefaultPreference.get('portalUrl').then((value) => this.setState({portalUrl:value})
+        );
     }
 
     fetchPortalItems(value){
@@ -65,7 +71,7 @@ class GridMenu extends Component {
         const querystring = Object.keys(data)
           .map(key => key + '=' + encodeURIComponent(data[key]))
           .join('&');
-        return 'https://dev-pradeep.ez2xs.com/call/api.logoutAll?' + querystring;
+          return this.state.baseUrl + "api.logoutAll?" + querystring;
       }
 
       urlToFetchPortalItems() {
@@ -76,7 +82,7 @@ class GridMenu extends Component {
         const querystring = Object.keys(data)
           .map(key => key + '=' + encodeURIComponent(data[key]))
           .join('&');
-        return 'https://dev-pradeep.ez2xs.com/call/api.getMedewerkerInfo?' + querystring;
+          return this.state.baseUrl + "api.getMedewerkerInfo?" + querystring;
       }
 
     performLogOut(){
@@ -141,6 +147,7 @@ class GridMenu extends Component {
             });
             this.state.portalItems.forEach(item => {
                 item.naam = this.camelize(item.naam);
+
             });
             // convertedArray = this.state.portalItems.push(convertedArray);
             this.setState({portalItems:this.state.portalItems});
@@ -184,8 +191,11 @@ class GridMenu extends Component {
         }else if(item.item.naam=="Help"){
             this.setState({isHelpPressed:true});
             this.performLogOut();
+        }else if(item.item.naam=="Release" && item.item.code=="#676767"){
+            Actions.portalPage({webUrl:"https://ez2xs.ez2xs.com/portal/release",title:item.item.naam})
+
         }else{
-            Actions.portalPage({webUrl:"https://dev-pradeep.ez2xs.com/n/?MAGIC=" +this.state.magic+"#"+ item.item.link,title:item.item.naam})
+            Actions.portalPage({webUrl:this.state.portalUrl+"/n/?MAGIC=" +this.state.magic+"#"+ item.item.link,title:item.item.naam})
         }
     }
 

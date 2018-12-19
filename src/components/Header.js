@@ -31,6 +31,7 @@ const styles = {
       alignItems: 'flex-start',
       backgroundColor: '#f4a30b',
       flex: Platform.isPad||ratio<=1.6?0.5:0.4,
+      height:Platform.isPad||ratio<=1.6?250:200
     },
     logOut: {
         padding:30
@@ -45,8 +46,8 @@ const styles = {
         fontSize: Platform.isPad||ratio<=1.6?20:14
     },
     logo: {
-      width: Platform.isPad||ratio<=1.6?200:100,
-      height: Platform.isPad||ratio<=1.6?200:100,
+      width: Platform.isPad||ratio<=1.6?150:100,
+      height: Platform.isPad||ratio<=1.6?150:100,
     },
   };
 

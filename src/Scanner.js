@@ -11,6 +11,8 @@ import DeviceInfo from 'react-native-device-info';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import Snackbar from 'react-native-snackbar';
 import {NetInfo} from 'react-native';
+import Orientation from 'react-native-orientation';
+
 import { 
     Platform,
     WebView,
@@ -33,7 +35,10 @@ export default class Scanner extends Component{
             preAuth:'',
             udid:'',
              authToken:'',
-             progressVisible:false
+             progressVisible:false,
+             baseUrl:"",
+             screen: Dimensions.get('window'),
+             isLandscape:false
             };
 
   urlForQueryAndPage(deviceName,preAuth,udid) {
@@ -47,7 +52,9 @@ export default class Scanner extends Component{
     const querystring = Object.keys(data)
       .map(key => key + '=' + encodeURIComponent(data[key]))
       .join('&');
-    return 'https://dev-pradeep.ez2xs.com/call/api.public.authorizeApp?' + querystring;
+
+          return this.state.baseUrl+ "api.public.authorizeApp?" +querystring
+
   }
 
   urlForLogin(saltString) {
@@ -60,15 +67,23 @@ export default class Scanner extends Component{
     const querystring = Object.keys(data)
       .map(key => key + '=' + encodeURIComponent(data[key]))
       .join('&');
-    return 'https://dev-pradeep.ez2xs.com/call/api.appLogin?' + querystring;
+      return this.state.baseUrl+ "api.appLogin?" +querystring
   }
 
   componentWillMount(){
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    Orientation.addOrientationListener(this._orientationDidChange)
+    if(SCREEN_WIDTH>SCREEN_HEIGHT)
+    {
+      this.setState({isLandscape:true});
+    }
   }
 
   componentWillUnmount(){
       BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  _orientationDidChange(orientation) {
   }
 
   handleBackButton = () => {
@@ -78,7 +93,7 @@ export default class Scanner extends Component{
   makeSlideOutTranslation(translationType, fromValue) {
     return {
       from: {
-        [translationType]: SCREEN_WIDTH * -0.08
+        [translationType]: this.state.isLandscape?SCREEN_HEIGHT * -0.08:SCREEN_WIDTH * -0.08
       },
       to: {
         [translationType]: fromValue
@@ -127,7 +142,7 @@ export default class Scanner extends Component{
 
     console.log('auth',response);
 
-    if(response.status === 200)
+    if(response.status === 200 && response.data.result!="error")
     {
       this.setState({ authToken: response.data.auth });
       var randomString = require('random-string');
@@ -143,12 +158,18 @@ export default class Scanner extends Component{
         this.performLoginAPI(loginQuery);
       })
     }else{
+      this.setState({progressVisible:false});
       this.showErrorMessage("Authorization failed");
     }
   }
+
+  onLayout(){
+    this.setState({screen: Dimensions.get('window')});
+  }
+
     render() {
         return(
-          <View style={styles.container}>
+          <View style={styles.container} onLayout = {this.onLayout.bind(this)}>
           <ProgressDialog 
           visible={this.state.progressVisible} 
           message="Please, wait..."
@@ -167,29 +188,37 @@ export default class Scanner extends Component{
               console.log('uniqueId',uniqueId);
               this.setState({udid:uniqueId})
               const qrcodeData = String(e.data);
-
-                if(qrcodeData.includes("preauth")){
-                  var urlParams = new URLSearchParams(e.data);
-                  var values = urlParams.values();
-                    for(value of values) { 
-                      if(value != 'Apple APP')
-                      {
-                        console.log(value);
-                        sha256(value).then( hash => {
-                          console.log('hash',hash)
-                          this.setState({preAuth:hash})
-                          const query = this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
-                          console.log('query',query);
-                          this.executeQuery(query);
-                        })
+              var b = e.data.split("/");
+              const portalUrl = "https://"+b[2];
+              DefaultPreference.set("portalUrl",portalUrl).then(() =>{
+                
+              });
+              const baseUrl  = "https://"+b[2]+'/call/'
+                  DefaultPreference.set('baseUrl',baseUrl).then(() => {
+                    this.setState({baseUrl:baseUrl});
+                    if(qrcodeData.includes("preauth")){
+                      var urlParams = new URLSearchParams(e.data);
+                      var values = urlParams.values();
+                        for(value of values) { 
+                          if(value.length >= 20)
+                          {
+                            console.log(value);
+                            sha256(value).then( hash => {
+                              console.log('hash',hash)
+                              this.setState({preAuth:hash})
+                              const query =  this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
+                              console.log('query',query);
+                              this.executeQuery(query);
+                            })
+                          }else{
+                            DefaultPreference.set('domainName', value).then(() => {
+                            });
+                          }
+                        }
                       }else{
-                        DefaultPreference.set('domainName', value).then(() => {
-                        });
+                        this.showErrorMessage("Authorization failed");
                       }
-                    }
-                  }else{
-                    this.showErrorMessage("Authorization failed");
-                  }
+                  });
                 }
               }
             customMarker={
@@ -203,7 +232,7 @@ export default class Scanner extends Component{
                   <View style={styles.rectangle}>
                     <Icon
                       name="ios-qr-scanner"
-                      size={SCREEN_WIDTH * 0.73}
+                      size={this.state.isLandscape?SCREEN_HEIGHT*0.73:SCREEN_WIDTH * 0.73}
                       color={iconScanColor}
                     />
                     <Animatable.View
@@ -214,7 +243,7 @@ export default class Scanner extends Component{
                       easing="linear"
                       animation={this.makeSlideOutTranslation(
                         "translateY",
-                        SCREEN_WIDTH * -0.54
+                        this.state.isLandscape?SCREEN_HEIGHT * -0.54:SCREEN_WIDTH * -0.54
                       )}
                     />
                   </View>
@@ -234,12 +263,13 @@ export default class Scanner extends Component{
 
 const overlayColor = "rgba(0,0,0,0.5)"; // this gives us a black color with a 50% transparency
 
-const rectDimensions = SCREEN_WIDTH * 0.65; // this is equivalent to 255 from a 393 device width
-const rectBorderWidth = SCREEN_WIDTH * 0.005; // this is equivalent to 2 from a 393 device width
-const rectBorderColor = "red";
+// const rectDimensions =this.state.isLandscape?SCREEN_HEIGHT * 0.65:SCREEN_WIDTH * 0.65;
+//  // this is equivalent to 255 from a 393 device width
+// const rectBorderWidth = this.state.isLandscape?SCREEN_HEIGHT * 0.005:SCREEN_WIDTH * 0.005; // this is equivalent to 2 from a 393 device width
+// const rectBorderColor = "red";
 
-const scanBarWidth = SCREEN_WIDTH * 0.46; // this is equivalent to 180 from a 393 device width
-const scanBarHeight = SCREEN_WIDTH * 0.0025; //this is equivalent to 1 from a 393 device width
+// const scanBarWidth = this.state.isLandscape?SCREEN_HEIGHT*0.46:SCREEN_WIDTH * 0.46; // this is equivalent to 180 from a 393 device width
+// const scanBarHeight = this.state.isLandscape?SCREEN_HEIGHT * 0.0025:SCREEN_WIDTH * 0.0025; //this is equivalent to 1 from a 393 device width
 const scanBarColor = "#22ff00";
 
 const iconScanColor = "blue";
@@ -268,9 +298,9 @@ const styles = {
   },
 
   rectangle: {
-    height: rectDimensions,
-    width: rectDimensions,
-    borderWidth: rectBorderWidth,
+    height: this.state.isLandscape?SCREEN_HEIGHT * 0.65:SCREEN_WIDTH * 0.65,
+    width: this.state.isLandscape?SCREEN_HEIGHT * 0.65:SCREEN_WIDTH * 0.65,
+    borderWidth: this.state.isLandscape?SCREEN_HEIGHT * 0.005:SCREEN_WIDTH * 0.005,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "transparent"
@@ -278,8 +308,8 @@ const styles = {
 
   topOverlay: {
     flex: 1,
-    height: SCREEN_WIDTH,
-    width: SCREEN_WIDTH,
+    height:this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
+    width: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
     backgroundColor: overlayColor,
     justifyContent: "center",
     alignItems: "center"
@@ -287,21 +317,21 @@ const styles = {
 
   bottomOverlay: {
     flex: 1,
-    height: SCREEN_WIDTH,
-    width: SCREEN_WIDTH,
+    height: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
+    width: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
     backgroundColor: overlayColor,
-    paddingBottom: SCREEN_WIDTH * 0.25
+    paddingBottom: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH * 0.00
   },
 
   leftAndRightOverlay: {
-    height: SCREEN_WIDTH * 0.65,
-    width: SCREEN_WIDTH,
+    height: this.state.isLandscape?SCREEN_HEIGHT*0.65:SCREEN_WIDTH*0.65,
+    width: this.state.isLandscape?SCREEN_HEIGHT:SCREEN_WIDTH,
     backgroundColor: overlayColor
   },
 
   scanBar: {
-    width: scanBarWidth,
-    height: scanBarHeight,
+    width: this.state.isLandscape?SCREEN_HEIGHT*0.46:SCREEN_WIDTH * 0.46,
+    height: this.state.isLandscape?SCREEN_HEIGHT * 0.0025:SCREEN_WIDTH * 0.0025,
     backgroundColor: scanBarColor
   }
 };
