@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, BackAndroid, View,Dimensions,NetInfo} from 'react-native';
+import {Platform, StyleSheet, BackAndroid, View,Dimensions,NetInfo,Alert} from 'react-native';
 import { SuperGridSectionList, GridView  } from 'react-native-super-grid';
 import { Actions } from 'react-native-router-flux';
 import DefaultPreference from 'react-native-default-preference';
@@ -24,7 +24,7 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'Release', code: '#676767', link:"https://ez2xs.ez2xs.com/portal/release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
+             portalItems: [{ naam: 'Release', code: '#676767', link:"https://ez2xs.ez2xs.com/portal/release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#f50a0a', icon:"sign-out",link:"",highlightColor:"#f4a30b"  }],
              domainName: "",
              isHelpPressed: false,
              baseUrl:"",
@@ -250,7 +250,7 @@ class GridMenu extends Component {
             Actions.scan();
         }else if(item.item.naam=="Help"){
             this.setState({isHelpPressed:true});
-            this.performAppLogout();
+            this.showAlertForLogOutPopup()
         }else if(item.item.naam=="Release" && item.item.code=="#676767"){
             Actions.portalPage({webUrl:"https://ez2xs.ez2xs.com/portal/release",title:item.item.naam})
 
@@ -263,6 +263,18 @@ class GridMenu extends Component {
         Platform.OS  === 'android' ?BackAndroid.exitApp(): RNExitApp.exitApp();
     }
     
+    showAlertForLogOutPopup(){
+        Alert.alert(
+            'Sign Out',
+            'Are you sure you want to signout?',
+            [
+              {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'OK', onPress: () => this.performAppLogout()},
+            ],
+            { cancelable: false }
+          )
+    }
+
     render(){
         const items = [
             { name: 'TURQUOISE', code: '#676767' }, { name: 'EMERALD', code: '#2ecc71' },

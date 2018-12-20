@@ -86,8 +86,8 @@ export default class Home extends Component{
             <Text style={styles.titleContainer}>- Select the option 'App Access'</Text>
             <Text style={styles.titleContainer}>- Scan the qr-code</Text>
             <View style={styles.gridContainer}>
-            <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#dddddd"  onPress={() => Actions.webPage({webUrl:"https://ez2xs.ez2xs.com/portal/release"})}></GridItem>
-            <GridItem  colorCode="#f50a0a" imageName='sign-in' highlightColor="#dddddd" onPress={() => this.showActionSheet()}></GridItem>
+            <GridItem  colorCode="#676767"  imageName='newspaper-o' highlightColor="#f4a30b"  onPress={() => Actions.webPage({webUrl:"https://ez2xs.ez2xs.com/portal/release"})}></GridItem>
+            <GridItem  colorCode="#f4a30b" imageName='sign-in' highlightColor="#676767" onPress={() => this.showActionSheet()}></GridItem>
             </View>
             </CardItem>
               <ActionSheet
