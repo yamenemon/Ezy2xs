@@ -157,6 +157,8 @@ class GridMenu extends Component {
         {
             axios.get(urlString)
             .then(response => this.finishFetchinPortalItems(response)
+            ).catch(
+                (error) => this.showErrorMessage("Authorization Failed")
             );
         }else{
             axios.get(urlString)
@@ -269,7 +271,7 @@ class GridMenu extends Component {
             'Are you sure you want to signout?',
             [
               {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-              {text: 'OK', onPress: () => this.performAppLogout()},
+              {text: 'Yes', onPress: () => this.performAppLogout()},
             ],
             { cancelable: false }
           )
