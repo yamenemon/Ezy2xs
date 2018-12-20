@@ -26,7 +26,7 @@ export default class Home extends Component{
     });
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     Orientation.addOrientationListener(this._orientationDidChange)
-    DefaultPreference.get('domainName').then((value) => this.setState({domainName:value}));
+    DefaultPreference.get('domainName').then((value) => console.log("Domainname",value));
 
   }
 

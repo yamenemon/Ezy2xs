@@ -14,7 +14,7 @@ import LoginPage from './LoginPage';
 import { Icon } from 'react-native-elements';
 import Button from './components/Button';
 import { TouchableHighlight } from 'react-native';
-
+import HelpPage from './HelpPage';
 
 const RouterComponent = (props) =>{
     return(
@@ -30,8 +30,8 @@ const RouterComponent = (props) =>{
                 renderBackButton={() => 
                     <TouchableHighlight style={{marginLeft:10}} underlayColor='transparent' onPress={()=>Actions.pop()}>
                     <Icon
-                        size={40}
-                        name="home"
+                        size={20}
+                        name="chevron-left"
                         type='font-awesome'
                         color='#000'
                         />           
@@ -44,8 +44,8 @@ const RouterComponent = (props) =>{
                 renderBackButton={() => 
                     <TouchableHighlight style={{marginLeft:10}} underlayColor='transparent' onPress={()=>Actions.pop()}>
                     <Icon
-                        size={40}
-                        name="home"
+                        size={20}
+                        name="chevron-left"
                         type='font-awesome'
                         color='#000'
                         />           
@@ -74,14 +74,33 @@ const RouterComponent = (props) =>{
                 renderBackButton={() => 
                     <TouchableHighlight style={{marginLeft:10}} underlayColor='transparent' onPress={()=>Actions.pop()}>
                     <Icon
-                        size={40}
-                        name="home"
+                        size={20}
+                        name="chevron-left"
                         type='font-awesome'
                         color='#000'
                         />           
                      </TouchableHighlight>
            }
         />
+
+                <Scene 
+                hideBackImage
+                key="helpPage" 
+                component={HelpPage} 
+                title='Help'
+                titleStyle={{ fontSize:18,flex: 1,flexWrap: "wrap"}}
+                renderBackButton={() => 
+                    <TouchableHighlight style={{marginLeft:10}} underlayColor='transparent' onPress={()=>Actions.pop()}>
+                    <Icon
+                        size={20}
+                        name="chevron-left"
+                        type='font-awesome'
+                        color='#000'
+                        />           
+                     </TouchableHighlight>
+           }
+        />
+
                 </Scene>
             </Scene>
         </Router>

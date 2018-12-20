@@ -221,6 +221,7 @@ export default class Scanner extends Component{
                             })
                           }else{
                             DefaultPreference.set('domainName', value).then(() => {
+                              console.log("domainname", value)
                             });
                           }
                         }

@@ -24,7 +24,7 @@ class GridMenu extends Component {
 
     state = { magic:'',
              progressVisible:false,
-             portalItems: [{ naam: 'Release', code: '#676767', link:"https://ez2xs.ez2xs.com/portal/release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#f50a0a', icon:"sign-out",link:"",highlightColor:"#f4a30b"  }],
+             portalItems: [{ naam: 'Release', code: '#676767', link:"https://ez2xs.ez2xs.com/portal/release", icon:"newspaper-o", highlightColor:"#f4a30b" },{ naam: 'Qrcodescan', code: '#f4a30b',icon:"qrcode",link:"",highlightColor:"#f4a30b"  },{ naam: 'Help', code: '#676767', icon:"question-circle",link:"",highlightColor:"#f4a30b"  }],
              domainName: "",
              isHelpPressed: false,
              baseUrl:"",
@@ -243,6 +243,7 @@ class GridMenu extends Component {
         console.log('response',response);
         this.setState({progressVisible:false});
         DefaultPreference.set('magic','').then(function() {console.log('done')});
+        DefaultPreference.set('domainName','').then(function() {console.log('done')});
         Actions.pop();
         this.state.isHelpPressed?Actions.auth():RNExitApp.exitApp(); 
     }
@@ -251,8 +252,8 @@ class GridMenu extends Component {
         if(item.item.naam=="Qrcodescan"){
             Actions.scan();
         }else if(item.item.naam=="Help"){
-            this.setState({isHelpPressed:true});
-            this.showAlertForLogOutPopup()
+            Actions.helpPage();
+            // this.showAlertForLogOutPopup()
         }else if(item.item.naam=="Release" && item.item.code=="#676767"){
             Actions.portalPage({webUrl:"https://ez2xs.ez2xs.com/portal/release",title:item.item.naam})
 
