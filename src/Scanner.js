@@ -200,31 +200,44 @@ export default class Scanner extends Component{
               var b = e.data.split("/");
               const portalUrl = "https://"+b[2];
               DefaultPreference.set("portalUrl",portalUrl).then(() =>{
-                
               });
+              
               const baseUrl  = "https://"+b[2]+'/call/'
                   DefaultPreference.set('baseUrl',baseUrl).then(() => {
                     this.setState({baseUrl:baseUrl});
                     if(qrcodeData.includes("preauth")){
                       var urlParams = new URLSearchParams(e.data);
+                      var urlKey = portalUrl+ "/app/auth?name";
+                      var domainname = urlParams.get(urlKey);
+                      DefaultPreference.set('domainName', domainname).then(() => {
+                        console.log("domainname", value)
+                      });                      var preAuth = urlParams.get("preauth");
+                      sha256(preAuth).then( hash => {
+                        console.log('hash',hash)
+                        this.setState({preAuth:hash})
+                        const query =  this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
+                        console.log('query',query);
+                        this.executeQuery(query);
+                      })
+                      console.log("domainName",preAuth,domainname);
                       var values = urlParams.values();
-                        for(value of values) { 
-                          if(value.length >= 20)
-                          {
-                            console.log(value);
-                            sha256(value).then( hash => {
-                              console.log('hash',hash)
-                              this.setState({preAuth:hash})
-                              const query =  this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
-                              console.log('query',query);
-                              this.executeQuery(query);
-                            })
-                          }else{
-                            DefaultPreference.set('domainName', value).then(() => {
-                              console.log("domainname", value)
-                            });
-                          }
-                        }
+                        // for(value of values) { 
+                        //   if(value.length >= 20)
+                        //   {
+                        //     console.log(value);
+                        //     sha256(value).then( hash => {
+                        //       console.log('hash',hash)
+                        //       this.setState({preAuth:hash})
+                        //       const query =  this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
+                        //       console.log('query',query);
+                        //       this.executeQuery(query);
+                        //     })
+                        //   }else{
+                        //     DefaultPreference.set('domainName', value).then(() => {
+                        //       console.log("domainname", value)
+                        //     });
+                        //   }
+                        // }
                       }else{
                         this.showErrorMessage("Authorization failed");
                       }
