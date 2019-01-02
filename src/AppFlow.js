@@ -11,7 +11,7 @@ export default class AppFlow extends Component{
 
 checkFlow(value){
    if(value.length==0){
-    this.setState({isAuthFlow:true,isMainFlow:false});
+    this.setState({isAuthFlow:false,isMainFlow:true});
    }else{
     this.setState({isAuthFlow:false,isMainFlow:true});
    }

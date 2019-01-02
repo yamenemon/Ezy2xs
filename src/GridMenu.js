@@ -157,13 +157,23 @@ class GridMenu extends Component {
         {
             axios.get(urlString)
             .then(response => this.finishFetchinPortalItems(response)
-            ).catch(
-                (error) => this.showErrorMessage("Authorization Failed")
-            );
+            ).catch((err) => {
+                    this.handleError(err);
+              });
         }else{
             axios.get(urlString)
             .then(response => this.logOut(response)
             );
+        }
+    }
+
+    handleError(error){
+        if(error.response.status == 401){
+            this.setState({progressVisible:false});
+            Snackbar.show({
+              title: message,
+              duration: Snackbar.LENGTH_LONG,
+            });
         }
     }
 

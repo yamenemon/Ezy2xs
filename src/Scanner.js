@@ -221,23 +221,6 @@ export default class Scanner extends Component{
                       })
                       console.log("domainName",preAuth,domainname);
                       var values = urlParams.values();
-                        // for(value of values) { 
-                        //   if(value.length >= 20)
-                        //   {
-                        //     console.log(value);
-                        //     sha256(value).then( hash => {
-                        //       console.log('hash',hash)
-                        //       this.setState({preAuth:hash})
-                        //       const query =  this.urlForQueryAndPage('iPhone',this.state.preAuth,this.state.udid)
-                        //       console.log('query',query);
-                        //       this.executeQuery(query);
-                        //     })
-                        //   }else{
-                        //     DefaultPreference.set('domainName', value).then(() => {
-                        //       console.log("domainname", value)
-                        //     });
-                        //   }
-                        // }
                       }else{
                         this.showErrorMessage("Authorization failed");
                       }
