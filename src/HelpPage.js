@@ -79,7 +79,7 @@ export default class HelpPage extends Component{
         console.log('response',response);
         this.setState({progressVisible:false});
         Actions.pop();
-        Actions.main();
+        Actions.auth();
     }
 
     showAlertForLogOutPopup(){
