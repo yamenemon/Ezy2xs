@@ -6,12 +6,30 @@ import DefaultPreference from 'react-native-default-preference';
 
 export default class PinCodePage extends Component{
 
-    state={pinCodeType:"choose"};
+    static navigationOptions = ({ navigation }) => ({
+        title: `${navigation.state.params.title}`,
+         headerTitleStyle : {textAlign: 'center',alignSelf:'center'},
+         headerTintColor:"#000000",
+
+         headerStyle: {tintColor:"#000000",backgroundColor:"#f4a30b"}
+        });
+    state={pinCodeType:"choose",
+            hasUserSetPin:'false run-android'};
+            
     componentWillMount(){
-        if(hasUserSetPinCode)
+        console.log('hasUserSetPinCode',hasUserSetPinCode);
+        DefaultPreference.get('pincode').then((value) => this.setpinCodeType(value));
+    }   
+
+    setpinCodeType(value){
+        this.setState({hasUserSetPin:value})
+        console.log('hasUserSetPin',this.state.hasUserSetPin);
+        if(this.state.hasUserSetPin === 'true')
         {
             this.setState({pinCodeType:"enter"});
         }
+
+
     }
 
     render()
@@ -26,12 +44,13 @@ export default class PinCodePage extends Component{
     proceedToMainMenu(){
         if(PinResultStatus.success)
         {
-            Actions.main();
+            DefaultPreference.set('pincode', 'true').then(() => {
+                Actions.gridMenu();
+              });
         }
     }
 
     async hasUserSetPinCode(){
-        DefaultPreference.set('Pincode', '').then(function() {console.log('done')});
 
     }
 

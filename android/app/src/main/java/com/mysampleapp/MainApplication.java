@@ -3,6 +3,10 @@ package com.mysampleapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.github.yamill.orientation.OrientationPackage;
+import com.github.wumke.RNExitApp.RNExitAppPackage;
+import com.rnfingerprint.FingerprintAuthPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.azendoo.reactnativesnackbar.SnackbarPackage;
 import com.sha256lib.Sha256Package;
 import com.oblador.keychain.KeychainPackage;
@@ -30,6 +34,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new OrientationPackage(),
+            new RNExitAppPackage(),
+            new FingerprintAuthPackage(),
+            new RNDeviceInfo(),
             new SnackbarPackage(),
             new Sha256Package(),
             new KeychainPackage(),

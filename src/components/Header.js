@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
-import { View,Text, TouchableOpacity, Image } from 'react-native';
+import { View,Text, TouchableOpacity, Image, Platform,Dimensions } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const ratio = SCREEN_HEIGHT/SCREEN_WIDTH;
 const Header =  (props) =>{
     return(
         <View style={styles.container}> 
-                 <TouchableOpacity style={styles.logOut} onPress={()=>Actions.auth()}>
+                 <TouchableOpacity style={styles.logOut} onPress={props.onPressExit}>
                     <Image source={props.logoutIconName}></Image>
                 </TouchableOpacity>
             <View style={styles.contentContainer}>
@@ -13,7 +15,7 @@ const Header =  (props) =>{
                 style={styles.logo}
                 source={require('./logo-app.png')} >
                 </Image>
-                <Text style={styles.textContainer}>ez2xs.ez2xs.com</Text>
+                <Text style={styles.textContainer}>{props.domainName}</Text>
             </View>
             <TouchableOpacity style={styles.logOut} onPress={props.onPress}>
                     <Image source={props.tvIconName}></Image>
@@ -28,7 +30,8 @@ const styles = {
       justifyContent: 'space-between',
       alignItems: 'flex-start',
       backgroundColor: '#f4a30b',
-      flex: 0.4,
+      flex: Platform.isPad||ratio<=1.6?0.5:0.4,
+      height:Platform.isPad||ratio<=1.6?250:200
     },
     logOut: {
         padding:30
@@ -39,10 +42,12 @@ const styles = {
       },
     textContainer: {
         marginTop: 25,
+        alignSelf:'center',
+        fontSize: Platform.isPad||ratio<=1.6?20:14
     },
     logo: {
-      width: 100,
-      height: 100,
+      width: Platform.isPad||ratio<=1.6?150:100,
+      height: Platform.isPad||ratio<=1.6?150:100,
     },
   };
 

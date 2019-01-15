@@ -4,10 +4,11 @@ import {AppRegistry,View} from 'react-native';
 import Router from './src/Router';
 import Home from './src/Home';
 import {name as appName} from './app.json';
-import RouterComponent from './src/Router';
+import DefaultPreference from 'react-native-default-preference';
+import AppFlow from "./src/AppFlow";
 
 const App = () =>(
-    <Router></Router>
+    <AppFlow></AppFlow>
 )
 
 AppRegistry.registerComponent(appName, () => App);
